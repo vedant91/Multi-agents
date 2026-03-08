@@ -186,7 +186,7 @@ State explicitly if automatic rejection triggers were NOT found.]
 """
 
 
-def run_research_agent(company_name: str, promoter_name: str, sector: str) -> str:
+def run_research_agent(company_name: str, promoter_name: str, sector: str) -> tuple:
     """
     Runs the Research Intelligence Agent with anti-hallucination safeguards.
 
@@ -196,7 +196,7 @@ def run_research_agent(company_name: str, promoter_name: str, sector: str) -> st
         sector: Industry sector (e.g., "steel manufacturing", "NBFC", "real estate")
 
     Returns:
-        Research intelligence report with cited findings only
+        Tuple of (research_report: str, raw_search_results: str)
     """
     print(f"Running Research Agent for: {company_name}")
     print("   Searching web — this takes 30-60 seconds...")
@@ -226,7 +226,7 @@ IMPORTANT INSTRUCTIONS:
 - Unverified allegations from news go in the UNVERIFIED section, NOT in confirmed findings
 
 RAW SEARCH RESULTS (your only source of truth):
-{raw_search_results[:4000]}
+{raw_search_results[:8000]}
 
 Now produce the research intelligence report following the output format.
 Remember: conservative and cited is better than comprehensive and hallucinated.
@@ -239,4 +239,4 @@ Remember: conservative and cited is better than comprehensive and hallucinated.
     )
 
     print("Research Agent Complete")
-    return result
+    return result, raw_search_results

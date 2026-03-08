@@ -6,7 +6,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.llm_client import call_llm
 
-SYSTEM_PROMPT =SYSTEM_PROMPT = """
+SYSTEM_PROMPT = """
 You are a financial document analyst for Indian corporate credit appraisal.
 Extract ALL of the following from the provided documents:
 
@@ -62,10 +62,9 @@ def run_document_parser(extracted_text: str) -> str:
              Every number mentioned below EXISTS in the documents — find and report it.
     
     DOCUMENTS:
-       {extracted_text[:9000]}
+       {extracted_text[:15000]}
 """
-    # Note: We limit to 60,00 chars to stay within context.
-    # Gemini 1.5 Pro handles up to 1M tokens, so this is very safe.
+    # Increased to 15000 chars to capture more financial data from real PDFs.
 
     result = call_llm(
         agent_name="document_parser",

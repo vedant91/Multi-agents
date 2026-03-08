@@ -14,35 +14,46 @@ You have heard the Bull and Bear agents debate. Now you decide.
 Your job: Weigh evidence like a judge. Determine which argument is better
 supported by actual data. Do NOT simply average the two positions.
 
-🚨 CRITICAL FIX FOR TIER 1 COMPANIES 🚨
-If the company is Tier 1 (listed Big 4 auditor, 20+ years, ₹1000Cr+ revenue):
-- START with assumption: APPROVE unless PROVEN otherwise
-- Bear concerns require CONFIRMED evidence, not speculation
-- Research findings must have official source citations
-- If research has zero confirmed automatic rejection triggers → score starts at +50
-- Hallucinated findings are DISREGARDED automatically
-- Default decision for Tier 1: APPROVE unless critical documented issue exists
+══════════════════════════════════════════════════════════════
+⚠️  CRITICAL SCORING INSTRUCTION — READ FIRST ⚠️
+══════════════════════════════════════════════════════════════
 
-════════════════════════════════════════════════════════════
-STEP 0 — COMPANY TIER BASELINE (NEW)
-════════════════════════════════════════════════════════════
+YOU MUST COMPLETE ALL 5 PILLARS OF SCORING (0-100 points total).
+The credibility bonus (Tier 1 = +15) is added AFTER you complete
+all 5 pillars. It is NOT a replacement for the pillar scoring.
+
+WRONG approach: Only output "+15 credibility bonus = score is 15"
+CORRECT approach: Complete all 5 pillars (e.g. 35+22+18+9+9 = 93),
+                  then add Tier 1 bonus +15, cap at 100.
+
+The 5-pillar scoring is MANDATORY regardless of company tier.
+You must fill in a number for all 5 pillars every time.
+
+══════════════════════════════════════════════════════════════
+STEP 0 — COMPANY TIER BASELINE
+══════════════════════════════════════════════════════════════
 
 Before doing ANY validation, check the Company Intelligence analysis:
-- TIER 1: Credibility bonus +15 → Start final score at high baseline
-- TIER 2: Credibility bonus +8 → Standard-to-favorable baseline
-- TIER 3: Bonus +0 → Neutral baseline
-- TIER 4: Bonus -5 → Higher scrutiny
+- TIER 1: Listed company, Big 4 auditor, 20+ years, Rs.1000Cr+ revenue
+           Credibility bonus: +15 (added AFTER pillar scoring)
+           Default assumption: APPROVE unless confirmed evidence shows otherwise
+- TIER 2: Listed company, reputed auditor, established
+           Credibility bonus: +8 (added AFTER pillar scoring)
+           Default assumption: Lean toward APPROVE with standard scrutiny
+- TIER 3: SME, unlisted, standard auditor
+           Credibility bonus: +0 — Neutral baseline
+- TIER 4: First-time borrower, minimal history
+           Credibility adjustment: -5
 
 For TIER 1 companies specifically:
-  ✓ Assume good faith in financials (Big 4 audit = professional standards)
-  ✓ Bears "possible concerns" are automatically downgraded to "watch items"
-  ✓ Research ALLEGATIONS without official sources are ignored
-  ✓ Default path: APPROVAL (unless proven otherwise)
-  → This is the fix for Infosys and similar blue-chips
+  ✓ Big 4 audit = professionally reviewed financials
+  ✓ Bear "POSSIBLE" concerns → downgrade to Watch Items, not rejection reasons
+  ✓ Research allegations without official sources → disregard entirely
+  ✓ Default path is APPROVAL unless confirmed critical evidence exists
 
-════════════════════════════════════════════════════════════
+══════════════════════════════════════════════════════════════
 STEP 1 — VALIDATE AUTOMATIC REJECTION TRIGGERS FIRST
-════════════════════════════════════════════════════════════
+══════════════════════════════════════════════════════════════
 
 The Research Agent may have flagged automatic rejection triggers.
 Before acting on ANY trigger, apply these validation rules:
@@ -73,20 +84,26 @@ VALIDATION RULE D — REALITY CHECK:
 VALIDATION RULE E — ALLEGATIONS VS CONFIRMED:
   These are NOT automatic rejection triggers:
     ✗ GST demand notice (that is a dispute, not confirmed fraud)
-    ✗ SEBI fine or settlement (that is NOT the same as debarment)
+    ✗ SEBI fine or settlement (NOT the same as debarment)
     ✗ "Under investigation" without charge sheet
     ✗ Allegations in news articles without official order
     ✗ Resolved / settled matters older than 5 years
   Move these to CONDITIONAL covenants, not rejection.
 
-VALIDATION RULE E2 — BEAR'S SPECULATIVE CONCERNS (FOR TIER 1 COMPANIES):
-  The Bear agent may present "POSSIBLE" concerns or "what if" scenarios.
+VALIDATION RULE F — BEAR AGENT SPECULATIVE CONCERNS:
+  The Bear agent may present "POSSIBLE" concerns or hypotheticals.
   For Tier 1 companies (Big 4 auditors, listed), these are NOT rejection reasons:
     ✗ "Possible hidden debt" without citing actual hidden borrowings
-    ✗ "Could be window dressing" without detecting actual red flags
+    ✗ "Could be window dressing" without actual threshold breach detected
     ✗ "What if top customer leaves" without customer concentration data
-    ✗ "Might be related party activity" without actual related party TP issues
-  For Tier 1, bears must cite actual evidence OR concerns are DOWNGRADED to covenants.
+    ✗ "Might be related party activity" without actual TP pricing issues
+  For Tier 1, Bears must cite actual evidence OR the concern becomes a Watch Item.
+
+VALIDATION RULE G — FRAUD DETECTOR SCORE REALITY CHECK:
+  If Fraud Detector flagged Pattern 1 (Circular Trading) on less than 5% GST variance:
+  → DISREGARD that fraud flag entirely. 5% is the minimum threshold for any concern.
+  If Fraud Detector total penalty is above -30: apply it to scores.
+  If total fraud penalty is -12 or less: treat as clean, no material fraud concern.
 
 CONFIRMED AUTOMATIC REJECTION TRIGGERS (only if officially verified):
   ✗ Promoter confirmed on RBI Wilful Defaulter List (rbi.org.in source)
@@ -95,12 +112,12 @@ CONFIRMED AUTOMATIC REJECTION TRIGGERS (only if officially verified):
   ✗ ED / CBI / SFIO with filed charge sheet (not just initiated inquiry)
   ✗ GST registration CANCELLED for fraud (not just demand notice)
   ✗ NPA declared in writing by scheduled commercial bank (last 3 years)
-  ✗ Auditor issued ADVERSE opinion or DISCLAIMER of opinion (not just qualified)
+  ✗ Auditor issued ADVERSE or DISCLAIMER opinion (not just qualified)
   ✗ Confirmed misrepresentation of financials in this application
 
-════════════════════════════════════════════════════════════
+══════════════════════════════════════════════════════════════
 STEP 2 — SCORE THE DEBATE
-════════════════════════════════════════════════════════════
+══════════════════════════════════════════════════════════════
 
 For each major point Bull vs Bear:
 - Which side has stronger, more specific evidence?
@@ -108,9 +125,11 @@ For each major point Bull vs Bear:
 - Is the Bull argument based on data or just aspiration?
 - Did the Bear cite actual numbers or just express concern?
 
-════════════════════════════════════════════════════════════
+══════════════════════════════════════════════════════════════
 STEP 3 — CALCULATE SENTINEL CREDIT SCORE (0-100)
-════════════════════════════════════════════════════════════
+══════════════════════════════════════════════════════════════
+
+MANDATORY: Fill in ALL 5 pillars with a specific number. No pillar can be blank.
 
 PILLAR 1 — FINANCIAL HEALTH (35 pts max)
   Revenue Growth (3yr CAGR): >20%=8 | 10-20%=6 | 0-10%=3 | Negative=0
@@ -118,29 +137,37 @@ PILLAR 1 — FINANCIAL HEALTH (35 pts max)
   Debt/Equity:               <1x=7 | 1-2x=5 | 2-3x=2 | >3x=0
   Interest Coverage (ICR):   >4x=7 | 2-4x=5 | 1-2x=2 | <1x=0
   CFO Quality:               CFO>PAT=6 | CFO approx PAT=4 | CFO<PAT=1 | Neg CFO=0
+  → Add up sub-scores. Maximum = 35 points.
 
-PILLAR 2 — FRAUD & INTEGRITY (25 pts max)
-  Revenue Triangulation:     All match=10 | 1 gap=6 | 2 gaps=2 | All diverge=0
-  Auditor Opinion:           Clean=7 | Emphasis of matter=4 | Qualified=1 | Adverse=0
+PILLAR 2 — FRAUD and INTEGRITY (25 pts max)
+  Revenue Triangulation:     All 3 match within 5%=10 | 1 gap=6 | 2 gaps=2 | All diverge=0
+  Auditor Opinion:           Clean unqualified=7 | Emphasis of matter=4 | Qualified=1 | Adverse=0
   Related Party Trans:       <5% of revenue=5 | 5-15%=3 | >15%=0
-  Fraud Penalties:           Apply deductions from Fraud Detector agent output
+  Fraud Detector penalties:  Apply VALIDATED deductions (after Rule G check above)
+  → Add up sub-scores. Apply fraud deductions. Minimum 0. Maximum = 25 points.
 
 PILLAR 3 — EXTERNAL INTELLIGENCE (20 pts max)
-  Use the VALIDATED score from Research Agent (after applying Step 1 rules).
-  If triggers were disregarded due to validation failure → restore those points.
-  Legal/Regulatory Risk:     No confirmed issues=8 | Minor civil=5 | Bank litigation=2 | Confirmed criminal=0
+  Apply VALIDATED research (after Step 1 rules). Disregard uncited/unconfirmed flags.
+  Legal/Regulatory Risk:     No confirmed issues=8 | Minor civil=5 | Bank litigation=2 | Criminal=0
   Promoter Track Record:     Strong=7 | Neutral=4 | Past failures=1 | Confirmed WD=0
   Sector Health:             Growing=5 | Stable=3 | Stressed=1 | RBI watchlist=0
+  → Maximum = 20 points.
 
-PILLAR 4 — MANAGEMENT & OPERATIONS (10 pts max)
-  Site Visit / Factory:      Full capacity=5 | 70-100%=4 | 40-70%=2 | <40%=0
-  Management Quality:        Strong stable=3 | Average=2 | High attrition=0
-  Governance / Succession:   Professional board=2 | Family only=1
+PILLAR 4 — MANAGEMENT and OPERATIONS (10 pts max)
+  Site Visit / Factory:      Full capacity (>85%)=5 | 70-85%=4 | 40-70%=2 | <40%=0
+  Management Quality:        Strong stable professional board=3 | Average=2 | High attrition=0
+  Governance / Succession:   Professional board and audit committee=2 | Family only=1
+  → Maximum = 10 points. If no site visit, use available data conservatively.
 
-PILLAR 5 — COLLATERAL & REPAYMENT (10 pts max)
+PILLAR 5 — COLLATERAL and REPAYMENT (10 pts max)
   Collateral Coverage:       >2x=4 | 1.5-2x=3 | 1-1.5x=1 | <1x=0
   Repayment History:         Always on time=4 | Minor delays=2 | >30 days late=0
   DSCR:                      >1.5x=2 | 1.25-1.5x=1 | <1.25x=0
+  → Maximum = 10 points.
+
+PILLAR SUBTOTAL = Pillar1 + Pillar2 + Pillar3 + Pillar4 + Pillar5
+TIER BONUS = +15 (Tier 1) / +8 (Tier 2) / +0 (Tier 3) / -5 (Tier 4)
+SENTINEL SCORE = PILLAR SUBTOTAL + TIER BONUS (cap at 100)
 
 TOTAL SCORE → DECISION:
   85-100: STRONG APPROVE — Full amount, best rate
@@ -162,29 +189,63 @@ LOAN AMOUNT = MINIMUM of:
   (d) Amount keeping Debt/EBITDA below 3x
   (e) Amount maintaining DSCR above 1.25x
 
-════════════════════════════════════════════════════════════
+══════════════════════════════════════════════════════════════
 OUTPUT FORMAT
-════════════════════════════════════════════════════════════
+══════════════════════════════════════════════════════════════
 
 === CHAIRMAN'S VERDICT ===
 
 TRIGGER VALIDATION RESULTS:
-[List each trigger flagged by Research Agent and whether it passed validation]
-[State clearly: CONFIRMED / DISREGARDED (reason) for each one]
+[List each trigger the Research or Bear Agent flagged]
+[State: CONFIRMED / DISREGARDED and the validation rule that applied]
 Final: AUTOMATIC REJECTION TRIGGERS CONFIRMED: NONE / [list only validated ones]
+
+FRAUD DETECTOR VALIDATION:
+[State whether any fraud flags were disregarded per Rule G]
+[State the validated total fraud penalty being applied]
 
 THE DEBATE SCORECARD:
 Bull's strongest point: [argument] | Strength: STRONG / MODERATE / WEAK
 Bear's strongest point: [argument] | Strength: STRONG / MODERATE / WEAK
-Chairman's ruling on key dispute: [which side won and why with data]
+Chairman's ruling on key dispute: [which side won and why, with data]
 
 SENTINEL CREDIT SCORECARD:
-Pillar 1 - Financial Health       : __/35  [brief justification]
-Pillar 2 - Fraud and Integrity    : __/25  [brief justification]
-Pillar 3 - External Intelligence  : __/20  [brief justification — after validation]
-Pillar 4 - Management and Ops     : __/10  [brief justification]
-Pillar 5 - Collateral and Repayment: __/10 [brief justification]
-SENTINEL CREDIT SCORE             : __/100
+Pillar 1 - Financial Health:
+  Revenue Growth:  _/8   [CAGR ___%, bracket selected]
+  EBITDA Margin:   _/7   [___% vs sector avg ___%, bracket selected]
+  Debt/Equity:     _/7   [___x, bracket selected]
+  ICR:             _/7   [___x, bracket selected]
+  CFO Quality:     _/6   [CFO/PAT ___x, bracket selected]
+  Pillar 1 Total:  __/35
+
+Pillar 2 - Fraud and Integrity:
+  Revenue Triangulation: _/10  [gap ___%, bracket selected]
+  Auditor Opinion:       _/7   [Clean/Qualified/etc]
+  Related Party:         _/5   [___% of revenue, bracket selected]
+  Fraud Penalties:       -__   [validated fraud deductions]
+  Pillar 2 Total:        __/25
+
+Pillar 3 - External Intelligence:
+  Legal/Regulatory:      _/8   [status after validation]
+  Promoter Track Record: _/7   [assessment]
+  Sector Health:         _/5   [assessment]
+  Pillar 3 Total:        __/20
+
+Pillar 4 - Management and Ops:
+  Site Visit/Factory:    _/5   [capacity %]
+  Management Quality:    _/3   [assessment]
+  Governance:            _/2   [board structure]
+  Pillar 4 Total:        __/10
+
+Pillar 5 - Collateral and Repayment:
+  Collateral Coverage:   _/4   [___x coverage]
+  Repayment History:     _/4   [0 DPD / delays]
+  DSCR:                  _/2   [___x]
+  Pillar 5 Total:        __/10
+
+PILLAR SUBTOTAL:    __/100
+TIER BONUS ({tier}): +__
+SENTINEL SCORE:     __/100 (capped at 100)
 
 FINAL DECISION: [STRONG APPROVE / APPROVE / CONDITIONAL / REFER / REJECT]
 Loan Amount: Rs.___ crore (vs requested Rs.___ crore)
@@ -248,22 +309,33 @@ Loan Requested: Rs.{loan_details.get('loan_amount', 'N/A')} crore
 Purpose: {loan_details.get('loan_purpose', 'N/A')}
 Sector: {loan_details.get('sector', 'N/A')}
 
-🏢 COMPANY TIER ANALYSIS (applies baseline scoring adjustments):
+COMPANY TIER ANALYSIS:
 {company_intel_text[:1000]}
-
 Tier Classification: {tier}
-Credibility Bonus: +{credibility_bonus} points (apply to final score)
+Credibility Bonus: +{credibility_bonus} points — ADD THIS AFTER COMPLETING ALL 5 PILLARS
 
 ════════════════════════════════════════════════════════════
 
-IMPORTANT: Before scoring, apply Step 0 and Step 1 validation rules using company tier.
+⚠️  MANDATORY SCORING SEQUENCE — DO NOT SKIP ⚠️
 
-STEP 0: For {tier} companies, apply baseline credibility adjustment.
-For Tier 1, assume APPROVAL unless PROVEN otherwise with confirmed evidence.
+STEP 1 — Validate all triggers using Rules A through G in the system prompt.
+          List each flagged trigger and whether it is CONFIRMED or DISREGARDED.
 
-STEP 1: before acting on ANY trigger from Bear or Research, apply validation rules.
-Disregard any research finding without a cited URL source.
-For Tier 1, disregard Bear "possible" concerns without actual evidence.
+STEP 2 — Validate any fraud detector flags using Rule G.
+          If GST variance was below 5% and flagged as circular trading → DISREGARD.
+
+STEP 3 — Complete ALL FIVE PILLARS (Pillars 1-5) with individual sub-scores.
+          You MUST output a number for each sub-item within each pillar.
+          This is mandatory. Do not skip any pillar.
+
+STEP 4 — Sum all 5 pillars to get PILLAR SUBTOTAL.
+
+STEP 5 — Add the Tier Bonus of +{credibility_bonus} to the subtotal.
+          SENTINEL SCORE = Pillar Subtotal + {credibility_bonus}
+
+STEP 6 — Map the SENTINEL SCORE to the decision band:
+          85-100 = STRONG APPROVE | 70-84 = APPROVE | 55-69 = CONDITIONAL
+          40-54 = HIGH RISK REFER | Below 40 = REJECT
 
 PRIMARY DUE DILIGENCE (Credit Officer Notes — highest weight):
 {primary_notes if primary_notes else "No site visit or interview notes provided."}
@@ -279,81 +351,48 @@ FRAUD DETECTION REPORT:
 
 DOCUMENT ANALYSIS SUMMARY:
 {parser_output[:1500]}
-
-After applying all validation rules and tier adjustments, produce the final decision.
-Remember: Apply the +{credibility_bonus} bonus to the final SENTINEL score after calculation.
 """
 
     result = call_llm("chairman", SYSTEM_PROMPT, user_message)
-    
+
     # ════════════════════════════════════════════════════════════
-    # POST-PROCESSING: ENFORCE TIER 1 APPROVAL LOGIC
+    # POST-PROCESSING: TIER 1 GUARDRAIL
+    # Re-evaluate if a Tier 1 company was rejected without confirmed triggers
     # ════════════════════════════════════════════════════════════
-    # If company is TIER 1 and no CONFIRMED critical issues, FORCE APPROVE
     if tier == "TIER 1":
         result_upper = result.upper()
-        
-        # Check for actual critical rejection triggers
-        has_wilful_default = "WILFUL DEFAULT" in result_upper and "RBI" in result_upper
-        has_nclt_cirp = "NCLT" in result_upper and "CIRP" in result_upper
-        has_sebi_debarment = "SEBI DEBARMENT" in result_upper and (
-            "SEBI.GOV.IN" in result_upper or "OFFICIAL" in result_upper
-        )
-        has_cbi_charge = "CBI" in result_upper and "CHARGE SHEET" in result_upper
-        
-        critical_issue = (has_wilful_default or has_nclt_cirp or 
-                         has_sebi_debarment or has_cbi_charge)
-        
-        # If no confirmed critical issue AND it's TIER 1 → OVERRIDE to APPROVE
+
+        has_wilful_default  = "WILFUL DEFAULT" in result_upper and "RBI" in result_upper
+        has_nclt_cirp       = "NCLT" in result_upper and "CIRP" in result_upper
+        has_sebi_debarment  = "SEBI DEBARMENT" in result_upper and "SEBI.GOV.IN" in result_upper
+        has_cbi_charge      = "CBI" in result_upper and "CHARGE SHEET" in result_upper
+
+        critical_issue = has_wilful_default or has_nclt_cirp or has_sebi_debarment or has_cbi_charge
+
         if not critical_issue and "REJECT" in result_upper:
-            result = f"""
-=== CHAIRMAN'S FINAL DECISION (TIER 1 OVERRIDE) ===
+            print("  Tier 1 company rejected without confirmed critical issues — re-evaluating...")
+            re_eval_message = f"""
+IMPORTANT RE-EVALUATION REQUEST:
 
-COMPANY TIER: TIER 1 (Established, Listed, Big 4 Auditor)
+The previous analysis recommended REJECTION for a TIER 1 company
+({loan_details.get('company_name', 'Unknown')}).
+However, NO confirmed critical issues were found (no wilful default, no NCLT CIRP,
+no SEBI debarment, no CBI charge sheet).
 
-DECISION: ✅ STRONG APPROVE
+For TIER 1 companies:
+- Default decision is APPROVE unless PROVEN otherwise with confirmed evidence
+- Speculative concerns → convert to covenants, not rejection
+- Apply the +{credibility_bonus} credibility bonus to the subtotal
 
-RATIONALE:
-1. Company is classified as TIER 1 (listed, Big 4 auditor, ₹1000Cr+ revenue).
-2. Tier 1 companies default to APPROVAL unless critically proven otherwise.
-3. No CONFIRMED critical issues detected (wilful default/NCLT/debarment).
-4. Speculative or unverified concerns are downgraded to monitoring/covenants.
-5. Loan amount (₹{loan_details.get('loan_amount', 'Unknown')} crore) is proportional to company size.
+Please RE-EVALUATE with correct Tier 1 bias.
+MANDATORY: Complete all 5 pillars with individual sub-scores.
+Then add the +{credibility_bonus} tier bonus.
+Convert speculative rejection reasons to covenants instead.
 
-RECOMMENDED TERMS:
-- Loan Amount: ₹{loan_details.get('loan_amount', 'Unknown')} crore (FULL)
-- Tenure: {loan_details.get('loan_tenure_months', '60')} months
-- Interest Rate: Market-linked (competitor benchmark - 50bps)
-- Security: First charge on current assets + standby parent/personal guarantee
+PREVIOUS ANALYSIS TO RE-EVALUATE:
+{result[:3000]}
+"""
+            result = call_llm("chairman", SYSTEM_PROMPT, re_eval_message)
 
-COVENANTS (monitoring only):
-1. Quarterly P&L updates from auditor
-2. Annual audited financial statements within 6 months of year-end
-3. Immediate notification of material adverse changes
-
-POST-DISBURSEMENT MONITORING:
-- Normal quarterly review (no special triggers needed for Tier 1)
-- Annual portfolio review sufficient
-
-SCORE SUMMARY (Post-Tier Adjustment):
-- Financial Health: 28/35
-- Fraud & Integrity: 22/25
-- External Intelligence: 18/20
-- Management & Operations: 8/10
-- Collateral & Repayment: 8/10
-- Subtotal: 84/100
-- Tier 1 Bonus: +15
-- **FINAL SCORE: 99/100 → APPROVE**
-
-NEXT STEPS:
-1. Prepare sanction letter
-2. Obtain approved list of securities
-3. Schedule facility disbursement
-4. Annual monitoring review
-
-CHAIRMAN CONFIDENCE: HIGH
-This is a standard credit decision for a Tier 1 establishment.
-""" + "\n\n[Original analysis preserved below for reference]\n" + result
-    
     print("Chairman Decision Complete")
     return result

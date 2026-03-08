@@ -198,6 +198,8 @@ else:
     agent_status = {
         "Document Parser": "⏳",
         "Research Agent": "⏳",
+        "Company Intel": "⏳",
+        "Fact Checker": "⏳",
         "Fraud Detector": "⏳",
         "Bull Agent": "⏳",
         "Bear Agent": "⏳",
@@ -225,9 +227,19 @@ else:
         elif "research" in step_lower:
             agent_status["Document Parser"] = "✅"
             agent_status["Research Agent"] = "🔵"
-        elif "fraud" in step_lower:
+        elif "tier" in step_lower or "credibility" in step_lower:
             agent_status["Research Agent"] = "✅"
+            agent_status["Company Intel"] = "🔵"
+        elif "fact" in step_lower:
+            agent_status["Company Intel"] = "✅"
+            agent_status["Fact Checker"] = "🔵"
+        elif "fraud" in step_lower:
+            agent_status["Fact Checker"] = "✅"
             agent_status["Fraud Detector"] = "🔵"
+        elif "bull" in step_lower and "bear" in step_lower:
+            agent_status["Fraud Detector"] = "✅"
+            agent_status["Bull Agent"] = "🔵"
+            agent_status["Bear Agent"] = "🔵"
         elif "bull" in step_lower:
             agent_status["Fraud Detector"] = "✅"
             agent_status["Bull Agent"] = "🔵"
@@ -235,6 +247,7 @@ else:
             agent_status["Bull Agent"] = "✅"
             agent_status["Bear Agent"] = "🔵"
         elif "chairman" in step_lower:
+            agent_status["Bull Agent"] = "✅"
             agent_status["Bear Agent"] = "✅"
             agent_status["Chairman Agent"] = "🔵"
         elif "stress" in step_lower:

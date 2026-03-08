@@ -1,7 +1,9 @@
 # orchestrator.py
-# THE BRAIN — Runs all 7 SENTINEL agents in the correct sequence
+# THE BRAIN — Runs all SENTINEL agents in the correct sequence
 
-import sys, os
+import sys, os, time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from agents.document_parser import run_document_parser
@@ -28,21 +30,51 @@ def run_sentinel(
     progress_callback=None       # Optional function for UI progress updates
 ) -> dict:
     """
-    Master orchestrator — runs all 7 SENTINEL agents in sequence.
+    Master orchestrator — runs all SENTINEL agents in sequence.
     
     Returns a dict with:
     - all agent outputs (for display in UI)
     - cam_text (the full CAM text)
     - cam_doc_path (path to the generated Word document)
     - final_decision (extracted decision for summary)
+    - timing (per-agent timing data)
     """
     
+    # ── Input Validation ─────────────────────────────────────────
+    if not company_name or not company_name.strip():
+        raise ValueError("company_name is required")
+    if not sector or not sector.strip():
+        raise ValueError("sector is required")
+    if loan_amount <= 0:
+        raise ValueError("loan_amount must be positive")
+    if loan_tenure_months <= 0:
+        raise ValueError("loan_tenure_months must be positive")
+
+    pipeline_start = time.time()
+    timing = {}
+
     def update_progress(step: str, pct: int):
         print(f"\n{'='*60}")
         print(f"  SENTINEL [{pct}%] — {step}")
         print(f"{'='*60}")
         if progress_callback:
             progress_callback(step, pct)
+
+    def timed_run(name, func, *args, **kwargs):
+        """Wrap an agent call with timing and error handling."""
+        start = time.time()
+        try:
+            result = func(*args, **kwargs)
+            elapsed = time.time() - start
+            timing[name] = round(elapsed, 1)
+            print(f"  ✅ {name} completed in {elapsed:.1f}s")
+            return result
+        except Exception as e:
+            elapsed = time.time() - start
+            timing[name] = round(elapsed, 1)
+            error_msg = f"[AGENT ERROR - {name}]: {str(e)}"
+            print(f"  ❌ {name} failed after {elapsed:.1f}s: {e}")
+            return error_msg
 
     loan_details = {
         "company_name": company_name,
@@ -71,51 +103,91 @@ def run_sentinel(
     # STEP 2: Document Parser Agent
     # ──────────────────────────────────────────────────────────
     update_progress("Parsing financial documents...", 15)
-    parser_output = run_document_parser(combined_text)
+    parser_output = timed_run("Document Parser", run_document_parser, combined_text)
     outputs['parser'] = parser_output
+    time.sleep(1.5)  # Rate limiting between agents
 
     # ──────────────────────────────────────────────────────────
     # STEP 3: Research Intelligence Agent
     # ──────────────────────────────────────────────────────────
-    update_progress("Conducting web research & background checks...", 30)
-    research_output = run_research_agent(company_name, promoter_name, sector)
+    update_progress("Conducting web research & background checks...", 28)
+    research_result = timed_run("Research Agent", run_research_agent, company_name, promoter_name, sector)
+    
+    # Research agent returns (analysis_text, raw_search_results) tuple
+    if isinstance(research_result, tuple):
+        research_output, raw_search_results = research_result
+    else:
+        # Error case — got a string error message
+        research_output = research_result
+        raw_search_results = ""
     outputs['research'] = research_output
+    time.sleep(1.5)  # Rate limiting between agents
 
     # ──────────────────────────────────────────────────────────
-    # STEP 3B: Company Intelligence Agent (NEW)
+    # STEP 3B: Company Intelligence Agent
     # ──────────────────────────────────────────────────────────
     update_progress("Analyzing company tier and credibility...", 35)
-    company_intel = run_company_intelligence(company_name, research_output)
+    company_intel = timed_run("Company Intelligence", run_company_intelligence, company_name, research_output)
     outputs['company_intelligence'] = company_intel
 
-    # Store tier info for downstream agents to use
+    # Handle error case — use defaults if company_intelligence failed
+    if isinstance(company_intel, str):
+        company_intel = {
+            "tier": "TIER 3", "credibility_bonus": 0,
+            "research_threshold": "standard", "bear_threshold": "standard",
+            "default_direction": "neutral", "analysis_text": company_intel
+        }
+
     company_tier = company_intel['tier']
     credibility_bonus = company_intel['credibility_bonus']
-    research_threshold = company_intel['research_threshold']
 
     # ──────────────────────────────────────────────────────────
-    # STEP 4: Fraud Detection Agent
+    # STEP 3C: Fact Checker Agent (NEW — was missing from pipeline!)
+    # Verifies research findings against raw search results
+    # Uses the SAME raw_search_results from research agent (no duplicate API calls)
     # ──────────────────────────────────────────────────────────
-    update_progress("Running fraud pattern detection...", 45)
-    fraud_output = run_fraud_detector(parser_output, research_output, primary_notes)
+    update_progress("Fact-checking research findings...", 40)
+    fact_check_output = timed_run("Fact Checker", run_fact_checker, research_output, raw_search_results)
+    outputs['fact_check'] = fact_check_output
+    time.sleep(1.5)  # Rate limiting between agents
+
+    # ──────────────────────────────────────────────────────────
+    # STEP 4: Fraud Detection Agent (now tier-aware)
+    # ──────────────────────────────────────────────────────────
+    update_progress("Running fraud pattern detection...", 48)
+    fraud_output = timed_run("Fraud Detector", run_fraud_detector, parser_output, research_output, primary_notes, company_tier)
     outputs['fraud'] = fraud_output
+    time.sleep(1.5)  # Rate limiting between agents
 
     # ──────────────────────────────────────────────────────────
-    # STEPS 5 & 6: Bull + Bear Agents (can run together)
+    # STEPS 5 & 6: Bull + Bear Agents (RUN IN PARALLEL!)
+    # Both are independent — no need to wait for one before the other.
     # ──────────────────────────────────────────────────────────
-    update_progress("Bull Agent building approval case...", 55)
-    bull_output = run_bull_agent(parser_output, fraud_output, research_output, loan_details)
+    update_progress("Bull & Bear agents debating (parallel)...", 55)
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        bull_future = executor.submit(
+            timed_run, "Bull Agent", run_bull_agent,
+            parser_output, fraud_output, research_output, loan_details, company_tier
+        )
+        bear_future = executor.submit(
+            timed_run, "Bear Agent", run_bear_agent,
+            parser_output, fraud_output, research_output, loan_details, company_tier
+        )
+        
+        bull_output = bull_future.result()
+        bear_output = bear_future.result()
+    
     outputs['bull'] = bull_output
-
-    update_progress("Bear Agent hunting for risks...", 63)
-    bear_output = run_bear_agent(parser_output, fraud_output, research_output, loan_details)
     outputs['bear'] = bear_output
+    time.sleep(1.5)  # Rate limiting between agents
 
     # ──────────────────────────────────────────────────────────
     # STEP 7: Chairman Agent — Final Decision
     # ──────────────────────────────────────────────────────────
     update_progress("Chairman weighing the debate...", 72)
-    chairman_output = run_chairman_agent(
+    chairman_output = timed_run(
+        "Chairman Agent", run_chairman_agent,
         bull_brief=bull_output,
         bear_brief=bear_output,
         fraud_output=fraud_output,
@@ -125,24 +197,43 @@ def run_sentinel(
         company_intelligence=company_intel
     )
     outputs['chairman'] = chairman_output
+    time.sleep(1.5)  # Rate limiting between agents
 
     # ──────────────────────────────────────────────────────────
     # STEP 8: Stress Test Agent
     # ──────────────────────────────────────────────────────────
     update_progress("Running stress test simulations...", 82)
-    stress_output = run_stress_test(parser_output, chairman_output, loan_details)
+    stress_output = timed_run("Stress Test", run_stress_test, parser_output, chairman_output, loan_details)
     outputs['stress_test'] = stress_output
+    time.sleep(1.5)  # Rate limiting between agents
 
     # ──────────────────────────────────────────────────────────
     # STEP 9: CAM Generator — Final Document
     # ──────────────────────────────────────────────────────────
     update_progress("Generating Credit Appraisal Memo...", 92)
     outputs['primary_notes'] = primary_notes
-    cam_text, cam_doc_path = run_cam_generator(outputs)
+    cam_text, cam_doc_path = timed_run("CAM Generator", run_cam_generator, outputs)
+    
+    # Handle error case
+    if isinstance(cam_text, str) and cam_text.startswith("[AGENT ERROR"):
+        cam_doc_path = ""
+    
     outputs['cam_text'] = cam_text
     outputs['cam_doc_path'] = cam_doc_path
 
+    # ── Pipeline Summary ─────────────────────────────────────
+    total_elapsed = time.time() - pipeline_start
+    timing['total'] = round(total_elapsed, 1)
+    outputs['timing'] = timing
+
     update_progress("SENTINEL Analysis Complete!", 100)
+    
+    print(f"\n{'='*60}")
+    print(f"  PIPELINE TIMING SUMMARY")
+    print(f"{'='*60}")
+    for agent, t in timing.items():
+        print(f"  {agent:.<30} {t:>6.1f}s")
+    print(f"{'='*60}")
     
     return outputs
 

@@ -158,7 +158,8 @@ BEAR CONFIDENCE: HIGH/MEDIUM/LOW
 
 
 def run_bull_agent(parser_output: str, fraud_output: str,
-                   research_output: str, loan_details: dict) -> str:
+                   research_output: str, loan_details: dict,
+                   company_tier: str = "TIER 3") -> str:
     """Runs the Bull Agent"""
     print("Running Bull Agent (Case for Approval)...")
 
@@ -167,18 +168,19 @@ def run_bull_agent(parser_output: str, fraud_output: str,
     Loan Requested: Rs.{loan_details.get('loan_amount', 'N/A')} crore
     Purpose: {loan_details.get('loan_purpose', 'N/A')}
     Sector: {loan_details.get('sector', 'N/A')}
+    Company Tier: {company_tier}
 
     Build the strongest possible evidence-based case for APPROVING this loan.
     Only use evidence found in the data below. Do not invent positives.
 
     DOCUMENT ANALYSIS:
-    {parser_output}
+    {parser_output[:2500]}
 
     FRAUD SCAN RESULTS:
-    {fraud_output}
+    {fraud_output[:2500]}
 
     RESEARCH INTELLIGENCE:
-    {research_output}
+    {research_output[:2500]}
     """
 
     result = call_llm("bull", BULL_SYSTEM_PROMPT, user_message)
@@ -187,7 +189,8 @@ def run_bull_agent(parser_output: str, fraud_output: str,
 
 
 def run_bear_agent(parser_output: str, fraud_output: str,
-                   research_output: str, loan_details: dict) -> str:
+                   research_output: str, loan_details: dict,
+                   company_tier: str = "TIER 3") -> str:
     """Runs the Bear Agent"""
     print("Running Bear Agent (Case for Rejection)...")
 
@@ -196,18 +199,20 @@ def run_bear_agent(parser_output: str, fraud_output: str,
     Loan Requested: Rs.{loan_details.get('loan_amount', 'N/A')} crore
     Purpose: {loan_details.get('loan_purpose', 'N/A')}
     Sector: {loan_details.get('sector', 'N/A')}
+    Company Tier: {company_tier}
+    {"NOTE: For " + company_tier + " companies, concerns MUST have confirmed evidence, not speculation." if company_tier in ("TIER 1", "TIER 2") else ""}
 
     Find every risk, red flag, and reason to REJECT or heavily restrict this loan.
     Be specific — cite exact data points for each concern.
 
     DOCUMENT ANALYSIS:
-    {parser_output[:1500]}
+    {parser_output[:2500]}
 
     FRAUD SCAN RESULTS:
-    {fraud_output[:1500]}
+    {fraud_output[:2500]}
 
     RESEARCH INTELLIGENCE:
-    {research_output[:1500]}
+    {research_output[:2500]}
     """
 
     result = call_llm("bear", BEAR_SYSTEM_PROMPT, user_message)

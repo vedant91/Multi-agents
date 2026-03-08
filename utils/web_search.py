@@ -2,6 +2,7 @@
 # Powers the Research Agent's internet search capability
 
 import os
+import time
 from tavily import TavilyClient
 from dotenv import load_dotenv
 
@@ -16,11 +17,6 @@ def search_web(query: str, max_results: int = 5, timeout_seconds: int = 30) -> s
     Returns formatted string of results for feeding into LLM.
     Falls back to neutral findings if API is slow.
     """
-    import signal
-    import time
-    
-    def timeout_handler(signum, frame):
-        raise TimeoutError(f"Web search exceeded {timeout_seconds} seconds")
     
     try:
         # For large companies, be generous with timeout
