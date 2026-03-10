@@ -94,28 +94,28 @@ def synthesize_cam_text(all_outputs: dict) -> str:
     Do NOT write generic statements — reference actual numbers and findings.
     
     DOCUMENT PARSER OUTPUT:
-    {all_outputs.get('parser', 'Not available')[:2500]}
+    {all_outputs.get('parser', 'Not available')[:15000]}
     
     RESEARCH INTELLIGENCE:
-    {all_outputs.get('research', 'Not available')[:2500]}
+    {all_outputs.get('research', 'Not available')[:15000]}
     
     FRAUD DETECTION:
-    {all_outputs.get('fraud', 'Not available')[:2500]}
+    {all_outputs.get('fraud', 'Not available')[:15000]}
     
     BULL AGENT BRIEF:
-    {all_outputs.get('bull', 'Not available')[:2500]}
+    {all_outputs.get('bull', 'Not available')[:15000]}
     
     BEAR AGENT BRIEF:
-    {all_outputs.get('bear', 'Not available')[:2500]}
+    {all_outputs.get('bear', 'Not available')[:15000]}
     
     CHAIRMAN'S VERDICT (FINAL DECISION):
-    {all_outputs.get('chairman', 'Not available')[:2500]}
+    {all_outputs.get('chairman', 'Not available')[:15000]}
     
     STRESS TEST RESULTS:
-    {all_outputs.get('stress_test', 'Not available')[:2500]}
+    {all_outputs.get('stress_test', 'Not available')[:15000]}
     
     PRIMARY DUE DILIGENCE NOTES:
-    {all_outputs.get('primary_notes', 'No site visit notes provided.')[:2500]}
+    {all_outputs.get('primary_notes', 'No site visit notes provided.')[:15000]}
     """
     
     return call_llm("cam_generator", SYNTHESIS_PROMPT, user_message)
@@ -179,7 +179,7 @@ def create_cam_word_document(cam_text: str, loan_details: dict,
     meta = [
         ('Prepared by:', 'SENTINEL Credit Intelligence System v1.0'),
         ('Company:', loan_details.get('company_name', 'N/A')),
-        ('Loan Amount:', f"₹{loan_details.get('loan_amount', 'N/A')} crore"),
+        ('Loan Amount:', f"₹{loan_details.get('loan_amount', 'N/A')}"),
         ('Date:', datetime.now().strftime('%d %B %Y')),
         ('Classification:', 'STRICTLY CONFIDENTIAL'),
     ]

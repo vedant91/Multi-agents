@@ -22,7 +22,7 @@ TIER 1: ESTABLISHMENT POWERHOUSES
 Company characteristics:
 - Listed on BSE 500 / NSE 200
 - Auditor: Big 4 (Deloitte, EY, PwC, KPMG)
-- Revenue: >₹1000 crore annual
+- Revenue: >₹10,000,000,000 annual
 - History: 20+ years in continuous operation
 - Examples: TCS, Infosys, Reliance, HDFC Bank, LT Ltd
 
@@ -35,9 +35,9 @@ Impact on scoring:
 
 TIER 2: SOLID MID-CAP COMPANIES
 Company characteristics:
-- Listed on BSE/NSE (any cap, but >₹500 crore market cap)
+- Listed on BSE/NSE (any cap, but >₹5,000,000,000 market cap)
 - Auditor: Big 4 OR reputable local firm
-- Revenue: ₹100-1000 crore
+- Revenue: ₹100-10,000,000,000
 - History: 10+ years operating
 - Examples: Mid-cap banking stocks, pharma companies, auto suppliers
 
@@ -50,7 +50,7 @@ Impact on scoring:
 TIER 3: PRIVATE / SMALL CAP COMPANIES
 Company characteristics:
 - Not listed OR listed on smaller boards
-- Revenue: <₹100 crore
+- Revenue: <₹1,000,000,000
 - History: 3-10 years
 - Auditor: Local firm acceptable
 
@@ -62,7 +62,7 @@ Impact on scoring:
 
 TIER 4: STARTUPS / NEW VENTURES
 Company characteristics:
-- < 3 years operating OR < ₹10 crore revenue
+- < 3 years operating OR < ₹100,000,000 revenue
 - Limited track record
 
 Impact on scoring:
@@ -125,7 +125,7 @@ Analyze company tier for:
 Company: {company_name}
 
 Research data (may contain listings status, auditor info):
-{research_output[:2000]}
+{research_output[:15000]}
 
 Classify into TIER 1-4 and determine credibility multiplier for this loan decision.
 Focus on: Listed status, auditor type, revenue size, track record.

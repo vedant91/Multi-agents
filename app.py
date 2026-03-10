@@ -100,7 +100,7 @@ with st.sidebar:
     ])
 
     st.markdown("### 💰 Loan Details")
-    loan_amount = st.number_input("Loan Amount (₹ crore) *", min_value=0.1, max_value=5000.0, value=20.0, step=0.5)
+    loan_amount = st.number_input("Loan Amount (₹) *", min_value=100000.0, max_value=50000000000.0, value=200000000.0, step=500000.0)
     loan_purpose = st.text_area("Loan Purpose *", placeholder="Working capital for expanded manufacturing operations")
     tenure = st.slider("Tenure (months)", min_value=6, max_value=120, value=60, step=6)
 
@@ -322,7 +322,7 @@ else:
         st.metric("SENTINEL Score", "See Report", help="Check Chairman section for full scorecard")
     
     with col_amount:
-        st.metric("Amount Requested", f"₹{loan_amount} Cr")
+        st.metric("Amount Requested", f"₹{loan_amount:,.2f}")
     
     with col_rate:
         st.metric("Tenure", f"{tenure} months")

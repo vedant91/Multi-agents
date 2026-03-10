@@ -226,7 +226,7 @@ IMPORTANT INSTRUCTIONS:
 - Unverified allegations from news go in the UNVERIFIED section, NOT in confirmed findings
 
 RAW SEARCH RESULTS (your only source of truth):
-{raw_search_results[:8000]}
+{raw_search_results[:24000]}
 
 Now produce the research intelligence report following the output format.
 Remember: conservative and cited is better than comprehensive and hallucinated.

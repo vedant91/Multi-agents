@@ -57,37 +57,79 @@ def run_document_parser(extracted_text: str) -> str:
     """
     print("🔵 Running Document Parser Agent...")
 
-    user_message = f"""
+    chunk_size = 24000  # Approx 6000 tokens (well within the 8192 limit)
+    chunks = [extracted_text[i:i + chunk_size] for i in range(0, max(1, len(extracted_text)), chunk_size)]
+    chunks = chunks[:5]  # Process up to 5 chunks ~120,000 characters total
+
+    if len(chunks) == 1:
+        user_message = f"""
                  Extract all financial data from these Indian corporate documents.
              Every number mentioned below EXISTS in the documents — find and report it.
     
     DOCUMENTS:
-       {extracted_text[:15000]}
+       {chunks[0]}
 """
-    # Increased to 15000 chars to capture more financial data from real PDFs.
+        result = call_llm(
+            agent_name="document_parser",
+            system_prompt=SYSTEM_PROMPT,
+            user_message=user_message
+        )
+        print("✅ Document Parser Complete")
+        return result
 
-    result = call_llm(
-        agent_name="document_parser",
+    all_results = []
+    for i, chunk in enumerate(chunks):
+        print(f"  📄 Parsing chunk {i+1}/{len(chunks)}...")
+        user_message = f"""
+                 Extract all financial data from these Indian corporate documents.
+             Every number mentioned below EXISTS in the documents — find and report it.
+    
+    DOCUMENTS PART {i+1}:
+       {chunk}
+"""
+        result = call_llm(
+            agent_name=f"document_parser_chunk_{i+1}",
+            system_prompt=SYSTEM_PROMPT,
+            user_message=user_message
+        )
+        all_results.append(result)
+
+    print("  🔄 Merging extracted data...")
+    combined_raw_data = "\n\n--- NEXT CHUNK EXTRACTION ---\n\n".join(all_results)
+    
+    merge_message = f"""
+    The following are partial data extractions from different parts of a company's documents.
+    Merge them into a single, complete financial report following the requested format.
+    If a value is "Not available" in one section but found in another, use the found value.
+    If it's truly not found across any chunk, say "Not available".
+    Do not add conversational fluff.
+    
+    PARTIAL EXTRACTIONS:
+    {combined_raw_data[:24000]}
+    """
+    
+    final_result = call_llm(
+        agent_name="document_parser_merge",
         system_prompt=SYSTEM_PROMPT,
-        user_message=user_message
+        user_message=merge_message
     )
 
     print("✅ Document Parser Complete")
-    return result
+    return final_result
 
 
 if __name__ == "__main__":
     # Quick test with dummy text
     test_text = """
     XYZ Manufacturing Ltd - Annual Report 2024
-    Revenue: Rs 250 crore (FY24), Rs 210 crore (FY23), Rs 180 crore (FY22)
-    EBITDA: Rs 35 crore (14% margin)
-    PAT: Rs 18 crore
-    Total Debt: Rs 85 crore
-    Net Worth: Rs 65 crore
-    Cash from Operations: Rs 12 crore
+    Revenue: Rs 2,500,000,000 (FY24), Rs 2,100,000,000 (FY23), Rs 1,800,000,000 (FY22)
+    EBITDA: Rs 350,000,000 (14% margin)
+    PAT: Rs 180,000,000
+    Total Debt: Rs 850,000,000
+    Net Worth: Rs 650,000,000
+    Cash from Operations: Rs 120,000,000
     Auditor: S.R. Batliboi & Co. (Clean opinion)
-    Related Party Transactions: Rs 8 crore (3.2% of revenue)
+    Related Party Transactions: Rs 80,000,000 (3.2% of revenue)
     """
     result = run_document_parser(test_text)
     print(result)

@@ -208,7 +208,7 @@ def run_stress_test(parser_output: str, chairman_output: str,
 Run all 4 stress scenarios for this company. Show your full math step by step.
 
 Company:     {company}
-Loan Amount: Rs.{loan_amount} crore
+Loan Amount: Rs.{loan_amount}
 Sector:      {sector}
 
 MANDATORY BEFORE STARTING:
@@ -225,11 +225,11 @@ MANDATORY BEFORE STARTING:
 If customer concentration data is not available in the documents,
 clearly state: "Assuming top 2 customers = 40% of revenue (conservative default)"
 
-FINANCIAL DATA (from Document Parser):
-{parser_output[:2500]}
+DOCUMENT FINANCIALS (for baseline numbers):
+{parser_output[:15000]}
 
-CHAIRMAN'S PROVISIONAL VERDICT:
-{chairman_output[:800]}
+CHAIRMAN'S PRELIMINARY DECISION (for current assessment context):
+{chairman_output[:15000]}
 """
 
     result = call_llm("stress_test", SYSTEM_PROMPT, user_message)

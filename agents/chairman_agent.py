@@ -248,7 +248,7 @@ TIER BONUS ({tier}): +__
 SENTINEL SCORE:     __/100 (capped at 100)
 
 FINAL DECISION: [STRONG APPROVE / APPROVE / CONDITIONAL / REFER / REJECT]
-Loan Amount: Rs.___ crore (vs requested Rs.___ crore)
+Loan Amount: Rs.___ (vs requested Rs.___)
 Interest Rate: ___% p.a. (Repo 6.5% + ___% risk premium)
 Tenure: ___ months
 Security: Primary: ___ | Collateral: ___
@@ -305,12 +305,12 @@ def run_chairman_agent(bull_brief: str, bear_brief: str,
 
     user_message = f"""
 Company: {loan_details.get('company_name', 'N/A')}
-Loan Requested: Rs.{loan_details.get('loan_amount', 'N/A')} crore
+Loan Requested: Rs.{loan_details.get('loan_amount', 'N/A')}
 Purpose: {loan_details.get('loan_purpose', 'N/A')}
 Sector: {loan_details.get('sector', 'N/A')}
 
 COMPANY TIER ANALYSIS:
-{company_intel_text[:1000]}
+{company_intel_text[:15000]}
 Tier Classification: {tier}
 Credibility Bonus: +{credibility_bonus} points — ADD THIS AFTER COMPLETING ALL 5 PILLARS
 
@@ -341,16 +341,16 @@ PRIMARY DUE DILIGENCE (Credit Officer Notes — highest weight):
 {primary_notes if primary_notes else "No site visit or interview notes provided."}
 
 BULL AGENT BRIEF:
-{bull_brief[:1500]}
+{bull_brief[:15000]}
 
 BEAR AGENT BRIEF:
-{bear_brief[:1500]}
+{bear_brief[:15000]}
 
 FRAUD DETECTION REPORT:
-{fraud_output[:1000]}
+{fraud_output[:15000]}
 
 DOCUMENT ANALYSIS SUMMARY:
-{parser_output[:1500]}
+{parser_output[:15000]}
 """
 
     result = call_llm("chairman", SYSTEM_PROMPT, user_message)
@@ -390,7 +390,7 @@ Then add the +{credibility_bonus} tier bonus.
 Convert speculative rejection reasons to covenants instead.
 
 PREVIOUS ANALYSIS TO RE-EVALUATE:
-{result[:3000]}
+{result[:15000]}
 """
             result = call_llm("chairman", SYSTEM_PROMPT, re_eval_message)
 

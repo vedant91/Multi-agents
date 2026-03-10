@@ -25,10 +25,10 @@ def run_fact_checker(research_output: str, raw_search_results: str) -> str:
     print("🔍 Running Fact Checker...")
     result = call_llm("fact_checker", SYSTEM_PROMPT, f"""
     RESEARCH OUTPUT TO CHECK:
-    {research_output[:2000]}
+    {research_output[:10000]}
     
     RAW SEARCH RESULTS (ground truth):
-    {raw_search_results[:3000]}
+    {raw_search_results[:24000]}
     
     Remove any finding in the research output that cannot be directly 
     quoted from the raw search results above.

@@ -49,7 +49,7 @@ OUTPUT FORMAT:
 
 === BULL BRIEF — CASE FOR APPROVAL ===
 
-HEADLINE: APPROVE ₹___ crore at ___% p.a.
+HEADLINE: APPROVE ₹___ at ___% p.a.
 
 TOP 5 REASONS TO APPROVE:
 1. [Strongest financial signal] | Evidence: [specific number]
@@ -124,7 +124,7 @@ OUTPUT FORMAT:
 
 === BEAR BRIEF — CASE FOR REJECTION / RESTRICTION ===
 
-HEADLINE: [REJECT / REDUCE TO ₹___ crore / CONDITIONAL ONLY]
+HEADLINE: [REJECT / REDUCE TO ₹___ / CONDITIONAL ONLY]
 NOTE: This recommendation is based ONLY on concerns with supporting evidence.
 
 CRITICAL CONCERNS (must have evidence; may justify rejection alone):
@@ -165,7 +165,7 @@ def run_bull_agent(parser_output: str, fraud_output: str,
 
     user_message = f"""
     Company: {loan_details.get('company_name', 'N/A')}
-    Loan Requested: Rs.{loan_details.get('loan_amount', 'N/A')} crore
+    Loan Requested: Rs.{loan_details.get('loan_amount', 'N/A')}
     Purpose: {loan_details.get('loan_purpose', 'N/A')}
     Sector: {loan_details.get('sector', 'N/A')}
     Company Tier: {company_tier}
@@ -174,13 +174,13 @@ def run_bull_agent(parser_output: str, fraud_output: str,
     Only use evidence found in the data below. Do not invent positives.
 
     DOCUMENT ANALYSIS:
-    {parser_output[:2500]}
+    {parser_output[:15000]}
 
     FRAUD SCAN RESULTS:
-    {fraud_output[:2500]}
+    {fraud_output[:15000]}
 
     RESEARCH INTELLIGENCE:
-    {research_output[:2500]}
+    {research_output[:15000]}
     """
 
     result = call_llm("bull", BULL_SYSTEM_PROMPT, user_message)
@@ -196,7 +196,7 @@ def run_bear_agent(parser_output: str, fraud_output: str,
 
     user_message = f"""
     Company: {loan_details.get('company_name', 'N/A')}
-    Loan Requested: Rs.{loan_details.get('loan_amount', 'N/A')} crore
+    Loan Requested: Rs.{loan_details.get('loan_amount', 'N/A')}
     Purpose: {loan_details.get('loan_purpose', 'N/A')}
     Sector: {loan_details.get('sector', 'N/A')}
     Company Tier: {company_tier}
@@ -206,13 +206,13 @@ def run_bear_agent(parser_output: str, fraud_output: str,
     Be specific — cite exact data points for each concern.
 
     DOCUMENT ANALYSIS:
-    {parser_output[:2500]}
+    {parser_output[:15000]}
 
     FRAUD SCAN RESULTS:
-    {fraud_output[:2500]}
+    {fraud_output[:15000]}
 
     RESEARCH INTELLIGENCE:
-    {research_output[:2500]}
+    {research_output[:15000]}
     """
 
     result = call_llm("bear", BEAR_SYSTEM_PROMPT, user_message)
