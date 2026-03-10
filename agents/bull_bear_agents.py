@@ -174,13 +174,13 @@ def run_bull_agent(parser_output: str, fraud_output: str,
     Only use evidence found in the data below. Do not invent positives.
 
     DOCUMENT ANALYSIS:
-    {parser_output[:15000]}
+    {parser_output[:6000]}
 
     FRAUD SCAN RESULTS:
-    {fraud_output[:15000]}
+    {fraud_output[:6000]}
 
     RESEARCH INTELLIGENCE:
-    {research_output[:15000]}
+    {research_output[:6000]}
     """
 
     result = call_llm("bull", BULL_SYSTEM_PROMPT, user_message)
@@ -206,13 +206,13 @@ def run_bear_agent(parser_output: str, fraud_output: str,
     Be specific — cite exact data points for each concern.
 
     DOCUMENT ANALYSIS:
-    {parser_output[:15000]}
+    {parser_output[:6000]}
 
     FRAUD SCAN RESULTS:
-    {fraud_output[:15000]}
+    {fraud_output[:6000]}
 
     RESEARCH INTELLIGENCE:
-    {research_output[:15000]}
+    {research_output[:6000]}
     """
 
     result = call_llm("bear", BEAR_SYSTEM_PROMPT, user_message)

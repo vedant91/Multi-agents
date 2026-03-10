@@ -226,10 +226,10 @@ If customer concentration data is not available in the documents,
 clearly state: "Assuming top 2 customers = 40% of revenue (conservative default)"
 
 DOCUMENT FINANCIALS (for baseline numbers):
-{parser_output[:15000]}
+{parser_output[:10000]}
 
 CHAIRMAN'S PRELIMINARY DECISION (for current assessment context):
-{chairman_output[:15000]}
+{chairman_output[:10000]}
 """
 
     result = call_llm("stress_test", SYSTEM_PROMPT, user_message)

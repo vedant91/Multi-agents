@@ -105,7 +105,7 @@ def run_document_parser(extracted_text: str) -> str:
     Do not add conversational fluff.
     
     PARTIAL EXTRACTIONS:
-    {combined_raw_data[:24000]}
+    {combined_raw_data[:18000]}
     """
     
     final_result = call_llm(

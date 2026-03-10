@@ -284,10 +284,10 @@ with zero score impact.
 {tier_note}
 
 DOCUMENT PARSER OUTPUT:
-{parser_output[:15000]}
+{parser_output[:10000]}
 
 RESEARCH INTELLIGENCE OUTPUT:
-{research_output[:15000]}
+{research_output[:10000]}
 
 PRIMARY DUE DILIGENCE NOTES (from credit officer):
 {primary_notes if primary_notes else "No primary notes provided yet."}

@@ -341,16 +341,16 @@ PRIMARY DUE DILIGENCE (Credit Officer Notes — highest weight):
 {primary_notes if primary_notes else "No site visit or interview notes provided."}
 
 BULL AGENT BRIEF:
-{bull_brief[:15000]}
+{bull_brief[:5000]}
 
 BEAR AGENT BRIEF:
-{bear_brief[:15000]}
+{bear_brief[:5000]}
 
 FRAUD DETECTION REPORT:
-{fraud_output[:15000]}
+{fraud_output[:5000]}
 
 DOCUMENT ANALYSIS SUMMARY:
-{parser_output[:15000]}
+{parser_output[:5000]}
 """
 
     result = call_llm("chairman", SYSTEM_PROMPT, user_message)

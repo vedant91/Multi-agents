@@ -125,7 +125,7 @@ Analyze company tier for:
 Company: {company_name}
 
 Research data (may contain listings status, auditor info):
-{research_output[:15000]}
+{research_output[:10000]}
 
 Classify into TIER 1-4 and determine credibility multiplier for this loan decision.
 Focus on: Listed status, auditor type, revenue size, track record.
