@@ -42,6 +42,7 @@ RED FLAGS (list each found):
 
 Be specific with numbers. If data exists in documents, extract it.
 Do not say NOT FOUND if the number appears anywhere in the text.
+CRITICAL: For EVERY financial figure you extract, you MUST explicitly state the unit (Rupees, Lakhs, Crores, Millions, etc.) EXACTLY as found in the text. For example, do not just write '200'; write '200 Crores' or '200 Lakhs' to prevent mathematical mismatches in downstream analysis.
 """
 
 

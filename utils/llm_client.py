@@ -36,6 +36,14 @@ def call_cerebras(system_prompt: str, user_message: str,
         "Content-Type": "application/json"
     }
 
+    # ── INJECT GLOBAL FINANCIAL AWARENESS PROMPT ────────────────
+    global_financial_prompt = """
+[CRITICAL INSTRUCTION: MONETARY UNIT DETECTION]
+Whenever you analyze financial amounts (Loan Amount, Revenue, EBITDA, Debt, etc.), they may be provided in different units across documents (e.g., exact Rupees [₹1,00,00,000], Lakhs [100 Lakhs], or Crores [1 Crore]). 
+You MUST independently detect, analyze, and state the unit being used. Always standardize the magnitude in your head before comparing numbers (e.g., realize that '10 Crores' is 100,000,000 Rupees). Do not make mathematically flawed rejection arguments by confusing an absolute Rupee figure for a Crore figure, or vice versa. Always evaluate the scale accurately.
+"""
+    system_prompt = system_prompt + "\n" + global_financial_prompt
+
     for attempt in range(max_retries):
         try:
             _last_call_time[model] = time.time()  # Record call time
