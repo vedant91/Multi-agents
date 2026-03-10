@@ -1,0 +1,5 @@
+Add global financial unit detection prompt to all LLMs
+
+- Appended global warning in `utils/llm_client.py` for all agents
+- Instructed model to detect Crores, Lakhs, and Rupees correctly
+- Updated `document_parser.py` to keep explicit magnitude labels (e.g. Crores)
