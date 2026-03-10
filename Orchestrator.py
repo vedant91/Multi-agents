@@ -105,7 +105,7 @@ def run_sentinel(
     update_progress("Parsing financial documents...", 15)
     parser_output = timed_run("Document Parser", run_document_parser, combined_text)
     outputs['parser'] = parser_output
-    time.sleep(1.5)  # Rate limiting between agents
+    time.sleep(2)  # Brief pause between agents
 
     # ──────────────────────────────────────────────────────────
     # STEP 3: Research Intelligence Agent
@@ -121,7 +121,7 @@ def run_sentinel(
         research_output = research_result
         raw_search_results = ""
     outputs['research'] = research_output
-    time.sleep(1.5)  # Rate limiting between agents
+    time.sleep(2)  # Brief pause between agents
 
     # ──────────────────────────────────────────────────────────
     # STEP 3B: Company Intelligence Agent
@@ -149,7 +149,7 @@ def run_sentinel(
     update_progress("Fact-checking research findings...", 40)
     fact_check_output = timed_run("Fact Checker", run_fact_checker, research_output, raw_search_results)
     outputs['fact_check'] = fact_check_output
-    time.sleep(1.5)  # Rate limiting between agents
+    time.sleep(2)  # Brief pause between agents
 
     # ──────────────────────────────────────────────────────────
     # STEP 4: Fraud Detection Agent (now tier-aware)
@@ -157,7 +157,7 @@ def run_sentinel(
     update_progress("Running fraud pattern detection...", 48)
     fraud_output = timed_run("Fraud Detector", run_fraud_detector, parser_output, research_output, primary_notes, company_tier)
     outputs['fraud'] = fraud_output
-    time.sleep(1.5)  # Rate limiting between agents
+    time.sleep(2)  # Brief pause between agents
 
     # ──────────────────────────────────────────────────────────
     # STEPS 5 & 6: Bull + Bear Agents (RUN IN PARALLEL!)
