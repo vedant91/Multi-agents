@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 CEREBRAS_API_KEY = os.getenv("GROQ_API_KEY") or os.getenv("CEREBRAS_API_KEY")
+DEFAULT_CEREBRAS_MODEL = os.getenv("CEREBRAS_MODEL", "llama3.1-8b")
 
 # ── RATE LIMITING FOR FREE TIER ────────────────────────────────
 _last_call_time = {"llama3.1-8b": 0}
@@ -69,8 +70,17 @@ def truncate_to_fit(system_prompt: str, user_message: str) -> tuple:
     return system_prompt, user_message
 
 
+def _is_model_not_found_error(error_text: str) -> bool:
+    """Detect model-not-found style errors across provider formats."""
+    msg = (error_text or "").lower()
+    return (
+        ("model" in msg or "models/" in msg)
+        and ("not found" in msg or "not supported" in msg or "unsupported" in msg)
+    )
+
+
 def call_cerebras(system_prompt: str, user_message: str,
-              model: str = "llama3.1-8b",
+              model: str = DEFAULT_CEREBRAS_MODEL,
               max_tokens: int = 2000) -> str:
     """Call Cerebras API with rate limiting and automatic context truncation."""
     import time
@@ -121,6 +131,10 @@ Detect the unit being used. Standardize before comparing (e.g., '10 Crores' = 10
                 return response.json()["choices"][0]["message"]["content"]
             else:
                 err = f"HTTP {response.status_code}: {response.text}"
+                if _is_model_not_found_error(response.text) and model != "llama3.1-8b":
+                    print(f"  ⚠️  Model '{model}' unavailable. Falling back to llama3.1-8b...")
+                    model = "llama3.1-8b"
+                    continue
                 if response.status_code == 400 and "context_length" in response.text:
                     # Context still too long even after truncation — aggressively trim
                     print(f"  ⚠️  Context still too long, aggressively truncating...")
@@ -151,8 +165,8 @@ def call_llm(agent_name: str, system_prompt: str, user_message: str) -> str:
 
     start = time.time()
 
-    # We use llama3.1-8b for everything since it is fast and available
-    result = call_cerebras(system_prompt, user_message, model="llama3.1-8b")
+    # We use configurable default model with safe fallback in call_cerebras
+    result = call_cerebras(system_prompt, user_message, model=DEFAULT_CEREBRAS_MODEL)
 
     elapsed = time.time() - start
     print(f"  ⏱️  {agent_name} LLM call: {elapsed:.1f}s")
