@@ -371,6 +371,7 @@ OUTPUT EVERY FIELD in the exact format specified in your instructions. Do not sk
             user_message=user_message
         )
 
+        # Backward compatibility: keep both prefixes while some runs may still emit legacy provider-specific errors.
         if not (result.startswith("[CEREBRAS ERROR]") or result.startswith("[LLM ERROR]")):
             all_extraction_texts.append(result)
             chunk_sources.append(source_label)

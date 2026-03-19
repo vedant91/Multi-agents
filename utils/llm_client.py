@@ -7,7 +7,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 CEREBRAS_API_KEY = os.getenv("GROQ_API_KEY") or os.getenv("CEREBRAS_API_KEY")
-DEFAULT_CEREBRAS_MODEL = os.getenv("CEREBRAS_MODEL", "llama3.1-8b")
+SAFE_FALLBACK_MODEL = "llama3.1-8b"
+DEFAULT_LLM_MODEL = (
+    os.getenv("LLM_MODEL")
+    or os.getenv("CEREBRAS_MODEL")
+    or SAFE_FALLBACK_MODEL
+)
 
 # ── RATE LIMITING FOR FREE TIER ────────────────────────────────
 _last_call_time = {"llama3.1-8b": 0}
@@ -80,7 +85,7 @@ def _is_model_not_found_error(error_text: str) -> bool:
 
 
 def call_cerebras(system_prompt: str, user_message: str,
-              model: str = DEFAULT_CEREBRAS_MODEL,
+              model: str = DEFAULT_LLM_MODEL,
               max_tokens: int = 2000) -> str:
     """Call Cerebras API with rate limiting and automatic context truncation."""
     import time
@@ -131,10 +136,12 @@ Detect the unit being used. Standardize before comparing (e.g., '10 Crores' = 10
                 return response.json()["choices"][0]["message"]["content"]
             else:
                 err = f"HTTP {response.status_code}: {response.text}"
-                if _is_model_not_found_error(response.text) and model != "llama3.1-8b":
-                    print(f"  ⚠️  Model '{model}' unavailable. Falling back to llama3.1-8b...")
-                    model = "llama3.1-8b"
-                    continue
+                if _is_model_not_found_error(response.text):
+                    if model != SAFE_FALLBACK_MODEL:
+                        print(f"  ⚠️  Model '{model}' unavailable. Falling back to {SAFE_FALLBACK_MODEL}...")
+                        model = SAFE_FALLBACK_MODEL
+                        continue
+                    return f"[LLM ERROR]: {err}"
                 if response.status_code == 400 and "context_length" in response.text:
                     # Context still too long even after truncation — aggressively trim
                     print(f"  ⚠️  Context still too long, aggressively truncating...")
@@ -143,7 +150,7 @@ Detect the unit being used. Standardize before comparing (e.g., '10 Crores' = 10
                     continue  # Retry with shorter input
                 if response.status_code in [429, 413, 502, 503, 504]:
                     raise Exception(err)
-                return f"[CEREBRAS ERROR]: {err}"
+                return f"[LLM ERROR]: {err}"
 
         except Exception as e:
             err = str(e)
@@ -152,8 +159,8 @@ Detect the unit being used. Standardize before comparing (e.g., '10 Crores' = 10
                 print(f"  ⚠️  Rate limit/Error on {model} (attempt {attempt+1}/{max_retries}), waiting {wait}s...")
                 time.sleep(wait)
             else:
-                return f"[CEREBRAS ERROR]: {err}"
-    return f"[CEREBRAS ERROR]: Max retries exceeded"
+                return f"[LLM ERROR]: {err}"
+    return f"[LLM ERROR]: Max retries exceeded"
 
 
 def call_llm(agent_name: str, system_prompt: str, user_message: str) -> str:
@@ -166,7 +173,7 @@ def call_llm(agent_name: str, system_prompt: str, user_message: str) -> str:
     start = time.time()
 
     # We use configurable default model with safe fallback in call_cerebras
-    result = call_cerebras(system_prompt, user_message, model=DEFAULT_CEREBRAS_MODEL)
+    result = call_cerebras(system_prompt, user_message, model=DEFAULT_LLM_MODEL)
 
     elapsed = time.time() - start
     print(f"  ⏱️  {agent_name} LLM call: {elapsed:.1f}s")
