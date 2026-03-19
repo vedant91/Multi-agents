@@ -1,9 +1,8 @@
 # utils/llm_client.py
-# LLM integration using Groq — 100% free API tier
-# - Model: llama-3.3-70b-versatile (128,000 token context window)
-# - Free tier: 30 RPM, 14,400 RPD, no credit card required
-# - API key: https://console.groq.com/ (sign up, no billing required)
-# - Much larger context than the old Cerebras 8,192-token limit
+# LLM integration using Google Gemini 1.5 Flash
+# - 1,000,000 token context window (vs 8,192 for Cerebras)
+# - Free tier: 15 RPM, 1M TPM, 1500 RPD
+# - Ideal for processing large Indian financial PDFs (200+ pages)
 
 import os
 import time
@@ -11,26 +10,25 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# GROQ_API_KEY is the primary env var; legacy names also accepted
-GROQ_API_KEY = (
-    os.getenv("GROQ_API_KEY")
-    or os.getenv("GROQ_API_KEY_FREE")
+GEMINI_API_KEY = (
+    os.getenv("GEMINI_API_KEY")
+    or os.getenv("GOOGLE_API_KEY")
+    # Legacy fallback so existing .env files still work during transition
+    or os.getenv("GROQ_API_KEY")
+    or os.getenv("CEREBRAS_API_KEY")
 )
 
-# ── RATE LIMITING FOR GROQ FREE TIER ──────────────────────────
-# Free tier: 30 RPM → minimum 2 s between calls
+# ── RATE LIMITING FOR GEMINI FREE TIER ────────────────────────
+# Free tier: 15 RPM → minimum 4 s between calls
 _last_call_time: dict[str, float] = {}
-GROQ_FREE_TIER_DELAY = 2.0  # seconds between calls
+GEMINI_FREE_TIER_DELAY = 4.0  # seconds between calls
 
-# ── GROQ llama-3.3-70b CONTEXT LIMITS ─────────────────────────
-# Context window: 128,000 tokens  (~512,000 chars)
-# Output (max):   8,192 tokens    → we request up to 4,096 by default
-GROQ_MAX_INPUT_TOKENS = 128_000
+# ── GEMINI 1.5 FLASH CONTEXT LIMITS ───────────────────────────
+# Input context: 1,000,000 tokens  (~4,000,000 chars)
+# Output (max):  8,192 tokens      → we request up to 4,096 by default
+GEMINI_MAX_INPUT_TOKENS = 1_000_000
 CHARS_PER_TOKEN = 4
-# Reserve tokens for completion output and system prompt overhead
-COMPLETION_RESERVE_TOKENS = 4_096
-MAX_INPUT_TOKENS = GROQ_MAX_INPUT_TOKENS - COMPLETION_RESERVE_TOKENS  # 123,904 tokens
-MAX_INPUT_CHARS = MAX_INPUT_TOKENS * CHARS_PER_TOKEN  # ~495,616 chars
+GEMINI_MAX_INPUT_CHARS = GEMINI_MAX_INPUT_TOKENS * CHARS_PER_TOKEN  # 4 M chars
 
 # ── GLOBAL FINANCIAL AWARENESS INSTRUCTION ────────────────────
 _FINANCIAL_AWARENESS = (
@@ -46,110 +44,87 @@ def estimate_tokens(text: str) -> int:
     return len(text) // CHARS_PER_TOKEN
 
 
-def truncate_to_fit(system_prompt: str, user_message: str) -> tuple[str, str]:
-    """
-    Truncate the user message to fit within Groq's 128K token limit.
-    System prompt is preserved; user message is trimmed only if needed.
-    Returns (system_prompt, user_message) — both guaranteed to fit.
-    """
-    combined_chars = len(system_prompt) + len(user_message)
-    if combined_chars <= MAX_INPUT_CHARS:
-        return system_prompt, user_message
-
-    available_for_user = MAX_INPUT_CHARS - len(system_prompt)
-    if available_for_user < 1_000:
-        # System prompt itself is too large — split evenly
-        half = MAX_INPUT_CHARS // 2
-        system_prompt = system_prompt[:half] + "\n\n[System prompt truncated]"
-        available_for_user = MAX_INPUT_CHARS - len(system_prompt)
-
-    if len(user_message) > available_for_user:
-        keep_start = int(available_for_user * 0.75)
-        keep_end = int(available_for_user * 0.20)
-        user_message = (
-            user_message[:keep_start]
-            + f"\n\n[... {len(user_message) - keep_start - keep_end:,} chars "
-            "truncated to fit context limit ...]\n\n"
-            + user_message[-keep_end:]
-        )
-        print(
-            f"  ⚠️  Input too large ({combined_chars:,} chars), "
-            f"trimmed to ~{len(system_prompt) + len(user_message):,} chars."
-        )
-
-    return system_prompt, user_message
-
-
-def call_groq(
+def call_gemini(
     system_prompt: str,
     user_message: str,
-    model: str = "llama-3.3-70b-versatile",
+    model: str = "gemini-1.5-flash",
     max_tokens: int = 4096,
 ) -> str:
     """
-    Call Groq API with rate limiting and retry logic.
+    Call Google Gemini 1.5 Flash with rate limiting and retry logic.
 
-    Groq free tier limits (no credit card required):
-      - 30 requests per minute     (enforced by GROQ_FREE_TIER_DELAY)
-      - 14,400 requests per day
-      - 128,000-token context window (llama-3.3-70b-versatile)
-    Get your free API key at: https://console.groq.com/
+    Gemini 1.5 Flash free tier limits:
+      - 15 requests per minute  (enforced by GEMINI_FREE_TIER_DELAY)
+      - 1,000,000 tokens per minute
+      - 1,500 requests per day
     """
     try:
-        from groq import Groq
+        import google.generativeai as genai
     except ImportError:
         return (
-            "[LLM ERROR]: groq is not installed. "
-            "Run: pip install groq"
+            "[LLM ERROR]: google-generativeai is not installed. "
+            "Run: pip install google-generativeai>=0.8.0"
         )
 
-    if not GROQ_API_KEY:
+    if not GEMINI_API_KEY:
         return (
-            "[LLM ERROR]: No API key found. Set GROQ_API_KEY in your .env file. "
-            "Get a free key at https://console.groq.com/ (no credit card required)."
+            "[LLM ERROR]: No API key found. Set GEMINI_API_KEY (or GOOGLE_API_KEY) "
+            "in your .env file."
         )
 
-    # Inject financial awareness and truncate if necessary
-    full_system = system_prompt + _FINANCIAL_AWARENESS
-    full_system, user_message = truncate_to_fit(full_system, user_message)
+    genai.configure(api_key=GEMINI_API_KEY)
 
-    client = Groq(api_key=GROQ_API_KEY)
+    # Inject financial awareness into the system prompt
+    full_system = system_prompt + _FINANCIAL_AWARENESS
+
+    # Gemini 1.5 Flash can handle 1M tokens; only truncate if somehow exceeded
+    combined_chars = len(full_system) + len(user_message)
+    if combined_chars > GEMINI_MAX_INPUT_CHARS:
+        overflow = combined_chars - GEMINI_MAX_INPUT_CHARS
+        user_message = user_message[: len(user_message) - overflow - 100]
+        print(
+            f"  ⚠️  Input too large ({combined_chars:,} chars), "
+            f"trimmed user message by {overflow:,} chars."
+        )
+
+    generation_config = {
+        "max_output_tokens": max_tokens,
+        "temperature": 0.0,      # deterministic
+        "top_p": 1.0,
+    }
 
     max_retries = 5
     for attempt in range(max_retries):
         # ── RATE LIMIT ────────────────────────────────────────
         elapsed = time.time() - _last_call_time.get(model, 0)
-        if elapsed < GROQ_FREE_TIER_DELAY:
-            time.sleep(GROQ_FREE_TIER_DELAY - elapsed)
+        if elapsed < GEMINI_FREE_TIER_DELAY:
+            time.sleep(GEMINI_FREE_TIER_DELAY - elapsed)
 
         _last_call_time[model] = time.time()
 
         try:
-            response = client.chat.completions.create(
-                model=model,
-                messages=[
-                    {"role": "system", "content": full_system},
-                    {"role": "user",   "content": user_message},
-                ],
-                temperature=0,     # deterministic
-                max_tokens=max_tokens,
+            gemini_model = genai.GenerativeModel(
+                model_name=model,
+                system_instruction=full_system,
+                generation_config=generation_config,
             )
-            return response.choices[0].message.content
+            response = gemini_model.generate_content(user_message)
+            return response.text
 
         except Exception as e:
             err = str(e)
-            # 429 = rate limit / daily quota exceeded
-            if "429" in err or "rate_limit" in err.lower():
-                wait = 60
+            # 429 = quota exceeded; 500/503 = transient server errors
+            if "429" in err or "quota" in err.lower():
+                wait = 60  # wait a full minute on quota errors
                 print(
-                    f"  ⚠️  Groq rate limit hit (attempt {attempt+1}/{max_retries}), "
+                    f"  ⚠️  Gemini quota hit (attempt {attempt+1}/{max_retries}), "
                     f"waiting {wait}s..."
                 )
                 time.sleep(wait)
             elif any(code in err for code in ("500", "502", "503", "504")):
                 wait = 2 ** (attempt + 1)
                 print(
-                    f"  ⚠️  Groq server error (attempt {attempt+1}/{max_retries}), "
+                    f"  ⚠️  Gemini server error (attempt {attempt+1}/{max_retries}), "
                     f"waiting {wait}s..."
                 )
                 time.sleep(wait)
@@ -161,17 +136,16 @@ def call_groq(
 
 def call_llm(agent_name: str, system_prompt: str, user_message: str) -> str:
     """
-    Unified LLM router — uses Groq llama-3.3-70b-versatile for all agents.
+    Unified LLM router — uses Gemini 1.5 Flash for all agents.
 
-    Why Groq (free tier):
-      • 100% free — no credit card, no billing surprises
-      • 128,000-token context window (vs 8,192 for old Cerebras)
-      • Processes large Indian financial PDFs without truncation
-      • llama-3.3-70b is a strong model for financial analysis tasks
-      • Get your API key at: https://console.groq.com/
+    Gemini 1.5 Flash advantages over the previous Cerebras llama3.1-8b:
+      • 1,000,000-token context window  (vs 8,192 tokens)
+      • Processes full 200-page Indian financial PDFs without truncation
+      • Higher free-tier quotas (1M TPM vs 8K per call)
+      • Better instruction following for structured extraction tasks
     """
     start = time.time()
-    result = call_groq(system_prompt, user_message)
+    result = call_gemini(system_prompt, user_message)
     elapsed = time.time() - start
     print(f"  ⏱️  {agent_name} LLM call: {elapsed:.1f}s")
     return result
@@ -181,10 +155,10 @@ def call_llm(agent_name: str, system_prompt: str, user_message: str) -> str:
 if __name__ == "__main__":
     print("Testing QUANTISENSE LLM connections...\n")
 
-    print("1. Testing Groq llama-3.3-70b-versatile (free)...")
-    r = call_groq(
+    print("1. Testing Gemini 1.5 Flash...")
+    r = call_gemini(
         system_prompt="You are a helpful assistant.",
-        user_message="Say exactly: GROQ LLAMA 70B WORKING",
+        user_message="Say exactly: GEMINI 1.5 FLASH WORKING",
     )
     print(f"   {r[:80]}\n")
 

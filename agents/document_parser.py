@@ -167,15 +167,14 @@ SECTION_MARKERS = [
 ]
 
 
-def _smart_chunk_document(text: str, max_chunk_size: int = 100_000) -> list[str]:
+def _smart_chunk_document(text: str, max_chunk_size: int = 200_000) -> list[str]:
     """
     Split document at natural section boundaries instead of arbitrary character counts.
 
-    With Groq llama-3.3-70b-versatile (128K token context), we use large chunks:
-      - Default max_chunk_size: 100,000 chars (~25,000 tokens) per chunk
-      - Leaves ample room for system prompt (~2K tokens) + output (~4K tokens)
-      - A 200-page PDF (~400,000 chars) fits in 4 chunks — 100% coverage
-      - Each chunk is well within Groq's 128K-token context limit
+    With Gemini 1.5 Flash (1M token context), we use much larger chunks:
+      - Default max_chunk_size: 200,000 chars (~50,000 tokens) per chunk
+      - A 200-page PDF (~400,000 chars) fits in just 2 chunks
+      - Each chunk stays well within Gemini's 1M-token limit
 
     Strategy:
     1. Split by PAGE markers (from pdf_extractor)
@@ -237,7 +236,7 @@ def _smart_chunk_document(text: str, max_chunk_size: int = 100_000) -> list[str]
     if current_chunk.strip():
         chunks.append(current_chunk)
 
-    # No arbitrary cap — Groq handles all chunks efficiently
+    # No arbitrary cap — Gemini 1.5 Flash can handle all chunks efficiently
     return chunks
 
 
@@ -345,8 +344,8 @@ def run_document_parser(extracted_text: str) -> str:
     print(f"   📊 Total document text length: {len(extracted_text):,} characters")
 
     # ── Smart chunking at section boundaries ──
-    # Groq llama-3.3-70b has a 128K-token context → use 100,000-char chunks
-    chunks = _smart_chunk_document(extracted_text, max_chunk_size=100_000)
+    # Gemini 1.5 Flash has a 1M-token context → use 200,000-char chunks
+    chunks = _smart_chunk_document(extracted_text, max_chunk_size=200_000)
 
     print(f"   📄 Document split into {len(chunks)} chunk(s) (section-aware)")
     for i, c in enumerate(chunks):
