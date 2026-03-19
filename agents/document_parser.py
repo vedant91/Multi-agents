@@ -167,16 +167,21 @@ SECTION_MARKERS = [
 ]
 
 
-def _smart_chunk_document(text: str, max_chunk_size: int = 14000) -> list:
+def _smart_chunk_document(text: str, max_chunk_size: int = 200_000) -> list[str]:
     """
     Split document at natural section boundaries instead of arbitrary character counts.
-    
+
+    With Gemini 1.5 Flash (1M token context), we use much larger chunks:
+      - Default max_chunk_size: 200,000 chars (~50,000 tokens) per chunk
+      - A 200-page PDF (~400,000 chars) fits in just 2 chunks
+      - Each chunk stays well within Gemini's 1M-token limit
+
     Strategy:
     1. Split by PAGE markers (from pdf_extractor)
     2. Accumulate pages into chunks respecting max_chunk_size
     3. Prefer breaking at section boundaries (Balance Sheet, P&L, etc.)
     4. Fall back to character split for oversized pages
-    
+
     This prevents splitting tables/sections mid-way.
     """
     if not text or not text.strip():
@@ -188,8 +193,8 @@ def _smart_chunk_document(text: str, max_chunk_size: int = 14000) -> list:
     pages = [p for p in pages if p.strip()]
 
     if not pages:
-        # No page markers — fall back to character-based
-        return [text[i:i + max_chunk_size] for i in range(0, len(text), max_chunk_size)][:15]
+        # No page markers — fall back to character-based (no arbitrary cap)
+        return [text[i:i + max_chunk_size] for i in range(0, len(text), max_chunk_size)]
 
     chunks = []
     current_chunk = ""
@@ -231,8 +236,8 @@ def _smart_chunk_document(text: str, max_chunk_size: int = 14000) -> list:
     if current_chunk.strip():
         chunks.append(current_chunk)
 
-    # Cap at 15 chunks (same as before for API cost control)
-    return chunks[:15]
+    # No arbitrary cap — Gemini 1.5 Flash can handle all chunks efficiently
+    return chunks
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -339,7 +344,8 @@ def run_document_parser(extracted_text: str) -> str:
     print(f"   📊 Total document text length: {len(extracted_text):,} characters")
 
     # ── Smart chunking at section boundaries ──
-    chunks = _smart_chunk_document(extracted_text, max_chunk_size=14000)
+    # Gemini 1.5 Flash has a 1M-token context → use 200,000-char chunks
+    chunks = _smart_chunk_document(extracted_text, max_chunk_size=200_000)
 
     print(f"   📄 Document split into {len(chunks)} chunk(s) (section-aware)")
     for i, c in enumerate(chunks):
@@ -371,7 +377,7 @@ OUTPUT EVERY FIELD in the exact format specified in your instructions. Do not sk
             user_message=user_message
         )
 
-        if not result.startswith("[CEREBRAS ERROR]"):
+        if not result.startswith("[LLM ERROR]"):
             all_extraction_texts.append(result)
             chunk_sources.append(source_label)
         else:
