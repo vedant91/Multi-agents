@@ -13,6 +13,7 @@ DEFAULT_LLM_MODEL = (
     or os.getenv("CEREBRAS_MODEL")
     or SAFE_FALLBACK_MODEL
 )
+INCOMPATIBLE_CEREBRAS_MODEL_HINTS = ("gemini", "models/")
 
 # ── RATE LIMITING FOR FREE TIER ────────────────────────────────
 _last_call_time = {"llama3.1-8b": 0}
@@ -84,12 +85,31 @@ def _is_model_not_found_error(error_text: str) -> bool:
     )
 
 
+def _resolve_cerebras_model(model: str) -> str:
+    """
+    Ensure the configured model is compatible with the Cerebras chat-completions endpoint.
+    Falls back safely when a Gemini-style model identifier is provided via env.
+    """
+    candidate = (model or "").strip()
+    if not candidate:
+        return SAFE_FALLBACK_MODEL
+
+    lowered = candidate.lower()
+    if any(hint in lowered for hint in INCOMPATIBLE_CEREBRAS_MODEL_HINTS):
+        print(f"  ⚠️  Model '{candidate}' is incompatible with Cerebras endpoint. Using {SAFE_FALLBACK_MODEL}.")
+        return SAFE_FALLBACK_MODEL
+
+    return candidate
+
+
 def call_cerebras(system_prompt: str, user_message: str,
               model: str = DEFAULT_LLM_MODEL,
               max_tokens: int = 2000) -> str:
     """Call Cerebras API with rate limiting and automatic context truncation."""
     import time
     import requests
+
+    model = _resolve_cerebras_model(model)
 
     # ── TRUNCATE TO FIT CONTEXT LIMIT ────────────────────────
     system_prompt, user_message = truncate_to_fit(system_prompt, user_message)
@@ -173,7 +193,8 @@ def call_llm(agent_name: str, system_prompt: str, user_message: str) -> str:
     start = time.time()
 
     # We use configurable default model with safe fallback in call_cerebras
-    result = call_cerebras(system_prompt, user_message, model=DEFAULT_LLM_MODEL)
+    runtime_model = _resolve_cerebras_model(DEFAULT_LLM_MODEL)
+    result = call_cerebras(system_prompt, user_message, model=runtime_model)
 
     elapsed = time.time() - start
     print(f"  ⏱️  {agent_name} LLM call: {elapsed:.1f}s")
