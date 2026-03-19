@@ -80,7 +80,7 @@ def _is_model_not_found_error(error_text: str) -> bool:
     """Detect model-not-found style errors across provider formats."""
     msg = (error_text or "").lower()
     return (
-        ("model" in msg or "models/" in msg)
+        ("model" in msg)
         and ("not found" in msg or "not supported" in msg or "unsupported" in msg)
     )
 
@@ -96,20 +96,20 @@ def _resolve_cerebras_model(model: str) -> str:
 
     lowered = candidate.lower()
     if any(hint in lowered for hint in INCOMPATIBLE_CEREBRAS_MODEL_HINTS):
-        print(f"  ⚠️  Model '{candidate}' is incompatible with Cerebras endpoint. Using {SAFE_FALLBACK_MODEL}.")
+        print(f"  ⚠️  Model '{candidate}' is incompatible with the configured LLM endpoint. Using {SAFE_FALLBACK_MODEL}.")
         return SAFE_FALLBACK_MODEL
 
     return candidate
 
 
 def call_cerebras(system_prompt: str, user_message: str,
-              model: str = DEFAULT_LLM_MODEL,
+              model: str = None,
               max_tokens: int = 2000) -> str:
     """Call Cerebras API with rate limiting and automatic context truncation."""
     import time
     import requests
 
-    model = _resolve_cerebras_model(model)
+    model = _resolve_cerebras_model(model or DEFAULT_LLM_MODEL)
 
     # ── TRUNCATE TO FIT CONTEXT LIMIT ────────────────────────
     system_prompt, user_message = truncate_to_fit(system_prompt, user_message)
@@ -157,6 +157,8 @@ Detect the unit being used. Standardize before comparing (e.g., '10 Crores' = 10
             else:
                 err = f"HTTP {response.status_code}: {response.text}"
                 if _is_model_not_found_error(response.text):
+                    # Runtime safety net for provider-side unsupported/unknown models
+                    # not caught by static hint-based compatibility checks.
                     if model != SAFE_FALLBACK_MODEL:
                         print(f"  ⚠️  Model '{model}' unavailable. Falling back to {SAFE_FALLBACK_MODEL}...")
                         model = SAFE_FALLBACK_MODEL
@@ -192,9 +194,8 @@ def call_llm(agent_name: str, system_prompt: str, user_message: str) -> str:
 
     start = time.time()
 
-    # We use configurable default model with safe fallback in call_cerebras
-    runtime_model = _resolve_cerebras_model(DEFAULT_LLM_MODEL)
-    result = call_cerebras(system_prompt, user_message, model=runtime_model)
+    # We use configurable default model with safe fallback in call_cerebras.
+    result = call_cerebras(system_prompt, user_message, model=DEFAULT_LLM_MODEL)
 
     elapsed = time.time() - start
     print(f"  ⏱️  {agent_name} LLM call: {elapsed:.1f}s")
