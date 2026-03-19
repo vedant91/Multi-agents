@@ -1,4 +1,4 @@
-# SENTINEL Architecture — After Fixes
+# QUANTISENSE Architecture — After Fixes
 
 ## System Flow Overview
 
@@ -372,7 +372,7 @@ Covenants: Standard protective measures
 
 ## Summary
 
-The fixed SENTINEL system now:
+The fixed QUANTISENSE system now:
 
 1. ✅ **Identifies company tier** — Knows difference between Infosys and startup
 2. ✅ **Validates sources** — Allegations not treated as facts

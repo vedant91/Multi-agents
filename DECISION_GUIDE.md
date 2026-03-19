@@ -1,6 +1,6 @@
-# SENTINEL Credit Decision Engine - Decision Flow Guide
+# QUANTISENSE Credit Decision Engine - Decision Flow Guide
 
-## Quick Reference: How SENTINEL Makes Decisions (Fixed Version)
+## Quick Reference: How QUANTISENSE Makes Decisions (Fixed Version)
 
 ---
 
@@ -213,7 +213,7 @@ Move these to MONITORING/COVENANTS, not rejection.
 
 ---
 
-## How to Read SENTINEL's Decision Letter
+## How to Read QUANTISENSE's Decision Letter
 
 Example for Tier 1 company:
 
@@ -315,7 +315,7 @@ streamlit run app.py
 
 ## Key Takeaway
 
-**SENTINEL is now a production-ready credit intelligence system** that:
+**QUANTISENSE is now a production-ready credit intelligence system** that:
 
 ✅ **Knows company tiers** → Different rules for Infosys vs startup  
 ✅ **Validates evidence** → No hallucinated rejections  

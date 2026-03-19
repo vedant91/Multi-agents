@@ -1,5 +1,5 @@
 # orchestrator.py
-# THE BRAIN — Runs all SENTINEL agents in the correct sequence
+# THE BRAIN — Runs all QUANTISENSE agents in the correct sequence
 
 import sys, os, time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -18,7 +18,7 @@ from agents.cam_generator import run_cam_generator
 from utils.pdf_extractor import extract_text_from_multiple_pdfs, combine_all_documents
 
 
-def run_sentinel(
+def run_quantisense(
     company_name: str,
     promoter_name: str,
     sector: str,
@@ -30,7 +30,7 @@ def run_sentinel(
     progress_callback=None       # Optional function for UI progress updates
 ) -> dict:
     """
-    Master orchestrator — runs all SENTINEL agents in sequence.
+    Master orchestrator — runs all QUANTISENSE agents in sequence.
     
     Returns a dict with:
     - all agent outputs (for display in UI)
@@ -55,7 +55,7 @@ def run_sentinel(
 
     def update_progress(step: str, pct: int):
         print(f"\n{'='*60}")
-        print(f"  SENTINEL [{pct}%] — {step}")
+        print(f"  QUANTISENSE [{pct}%] — {step}")
         print(f"{'='*60}")
         if progress_callback:
             progress_callback(step, pct)
@@ -226,7 +226,7 @@ def run_sentinel(
     timing['total'] = round(total_elapsed, 1)
     outputs['timing'] = timing
 
-    update_progress("SENTINEL Analysis Complete!", 100)
+    update_progress("QUANTISENSE Analysis Complete!", 100)
     
     print(f"\n{'='*60}")
     print(f"  PIPELINE TIMING SUMMARY")
@@ -243,11 +243,11 @@ def run_sentinel(
 # ──────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     print("\n" + "="*60)
-    print("  SENTINEL — ADVERSARIAL CREDIT INTELLIGENCE")
+    print("  QUANTISENSE — ADVERSARIAL CREDIT INTELLIGENCE")
     print("  Test Run (No Documents Uploaded)")
     print("="*60 + "\n")
 
-    results = run_sentinel(
+    results = run_quantisense(
         company_name="ABC Steel Manufacturing Pvt Ltd",
         promoter_name="Rajesh Kumar Sharma",
         sector="steel manufacturing",

@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.llm_client import call_llm
 
 SYSTEM_PROMPT = """
-You are SENTINEL's Company Intelligence Agent.
+You are QUANTISENSE's Company Intelligence Agent.
 Your job: Classify the company into a tier and apply baseline credibility multipliers.
 
 This fixes a critical bug: Infosys (30-year-old listed IT giant with $20B+ revenue)
@@ -120,52 +120,59 @@ def run_company_intelligence(company_name: str, research_output: str) -> dict:
     """
     print("Running Company Intelligence Agent...")
 
-    user_message = f"""
-Analyze company tier for:
-Company: {company_name}
+    user_message = f"""Analyze company tier for: {company_name}
 
-Research data (may contain listings status, auditor info):
+Research data (may contain listing status, auditor info):
 {research_output[:10000]}
 
-Classify into TIER 1-4 and determine credibility multiplier for this loan decision.
+YOU MUST classify into exactly one of: TIER 1, TIER 2, TIER 3, TIER 4.
+Start your response with: COMPANY TIER: TIER [1/2/3/4]
+Then follow the full output format from your instructions.
 Focus on: Listed status, auditor type, revenue size, track record.
 """
 
     analysis = call_llm("company_intelligence", SYSTEM_PROMPT, user_message)
 
-    # Parse the response to extract tier
+    # Parse the response to extract tier — use FIRST match to be deterministic
     tier = "TIER 3"  # Default
     bonus = 0
     research_threshold = "standard"
     bear_threshold = "standard"
     default_direction = "neutral"
 
-    # Simple parsing (LLM should output clearly)
-    analysis_upper = analysis.upper()
-    if "TIER 1" in analysis_upper:
-        tier = "TIER 1"
-        bonus = 15
-        research_threshold = "official_sources_only"
-        bear_threshold = "confirmed_only"
-        default_direction = "approve"
-    elif "TIER 2" in analysis_upper:
-        tier = "TIER 2"
-        bonus = 8
-        research_threshold = "credible_sources"
-        bear_threshold = "evidence_required"
-        default_direction = "conditional_to_approve"
-    elif "TIER 3" in analysis_upper:
-        tier = "TIER 3"
-        bonus = 0
-        research_threshold = "standard"
-        bear_threshold = "standard"
-        default_direction = "neutral"
-    elif "TIER 4" in analysis_upper:
-        tier = "TIER 4"
-        bonus = -5
-        research_threshold = "standard"
-        bear_threshold = "standard"
-        default_direction = "scrutiny"
+    # Look for explicit "COMPANY TIER: TIER X" first (most reliable)
+    import re
+    tier_match = re.search(r'COMPANY\s*TIER\s*:\s*TIER\s*(\d)', analysis, re.IGNORECASE)
+    if not tier_match:
+        # Fallback: look for "TIER X" anywhere
+        tier_match = re.search(r'TIER\s*(\d)', analysis, re.IGNORECASE)
+    
+    if tier_match:
+        tier_num = int(tier_match.group(1))
+        if tier_num == 1:
+            tier = "TIER 1"
+            bonus = 15
+            research_threshold = "official_sources_only"
+            bear_threshold = "confirmed_only"
+            default_direction = "approve"
+        elif tier_num == 2:
+            tier = "TIER 2"
+            bonus = 8
+            research_threshold = "credible_sources"
+            bear_threshold = "evidence_required"
+            default_direction = "conditional_to_approve"
+        elif tier_num == 3:
+            tier = "TIER 3"
+            bonus = 0
+            research_threshold = "standard"
+            bear_threshold = "standard"
+            default_direction = "neutral"
+        elif tier_num == 4:
+            tier = "TIER 4"
+            bonus = -5
+            research_threshold = "standard"
+            bear_threshold = "standard"
+            default_direction = "scrutiny"
 
     print(f"Company Intelligence Complete: {tier} (+{bonus} pts)")
 

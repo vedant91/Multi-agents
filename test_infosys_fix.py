@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Test script to verify Infosys loan application approval with fixed SENTINEL system.
+Test script to verify Infosys loan application approval with fixed QUANTISENSE system.
 This demonstrates that Tier 1 companies are now properly handled.
 """
 
@@ -8,13 +8,13 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from Orchestrator import run_sentinel
+from Orchestrator import run_quantisense
 
 def test_infosys_scenario():
     """Test the Infosys scenario that was previously failing"""
 
     print("\n" + "="*70)
-    print("SENTINEL SYSTEM TEST — Infosys Loan Application")
+    print("QUANTISENSE SYSTEM TEST — Infosys Loan Application")
     print("="*70)
     print("\nScenario: Large established IT company (TIER 1)")
     print("Company: Infosys Limited")
@@ -24,11 +24,11 @@ def test_infosys_scenario():
     print("Expected Result AFTER fixes: APPROVED (correctly)\n")
 
     print("-" * 70)
-    print("Running SENTINEL Analysis...")
+    print("Running QUANTISENSE Analysis...")
     print("-" * 70 + "\n")
 
     try:
-        results = run_sentinel(
+        results = run_quantisense(
             company_name="Infosys Limited",
             promoter_name="Nandan Nilekani",
             sector="it services",

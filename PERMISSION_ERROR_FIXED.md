@@ -1,4 +1,4 @@
-# SENTINEL System - Permission Error FIXED ✅
+# QUANTISENSE System - Permission Error FIXED ✅
 
 ## Problem Solved
 **Before**: ❌ `PermissionError: [Errno 13] Permission denied: 'output/CAM_Infosys.docx'`

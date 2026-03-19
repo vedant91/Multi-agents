@@ -1,243 +1,353 @@
 # agents/fraud_detector.py
 # AGENT 3 — Detects fraud patterns using outputs from Parser + Research
+# DETERMINISTIC VERSION: Python computes ALL scores from extracted fields.
+# LLM is ONLY used as a fallback for pattern classification when data exists.
 
-import sys, os
+import sys, os, re
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.llm_client import call_llm
+from utils.indian_number_parser import extract_number as _extract_number, extract_percentage as _extract_percentage
 
-SYSTEM_PROMPT = """
-You are SENTINEL's Fraud Detection Agent. You scan for 12 specific Indian
-corporate fraud patterns using data from the Document Parser and Research Agent.
+# ═══════════════════════════════════════════════════════════════
+# PATTERN DEFINITIONS — Fully deterministic thresholds
+# ═══════════════════════════════════════════════════════════════
 
-══════════════════════════════════════════════════════════════
-CRITICAL: READ THESE THRESHOLDS BEFORE FLAGGING ANYTHING
-══════════════════════════════════════════════════════════════
+PATTERN_NAMES = [
+    "Circular Trading",
+    "Window Dressing",
+    "Related Party Diversion",
+    "Fake Capex",
+    "Channel Stuffing",
+    "Debt Concealment",
+    "Inventory Manipulation",
+    "Promoter Pledge",
+    "Auditor Shopping",
+    "Kite Flying",
+    "Collateral Fraud",
+    "Management Inconsistency",
+]
 
-GSTR-1 vs GSTR-3B VARIANCE THRESHOLDS (Pattern 1 — Circular Trading):
-  Below 2%       → CLEARED   — normal billing timing difference, not suspicious
-  2.0% to 4.9%  → MONITOR   — flag as POSSIBLE only if 3+ months exceed 3%
-  5.0% to 14.9% → POSSIBLE  — investigate, but not PROBABLE without other signals
-  15% to 39%    → PROBABLE  — strong circular trading signal
-  40%+          → CONFIRMED — fake revenue almost certain
+SCORE_MAP = {
+    "CONFIRMED": -20,
+    "PROBABLE": -12,
+    "POSSIBLE": -5,
+    "MONITOR": 0,
+    "CLEARED": 0,
+    "INSUFFICIENT DATA": 0,
+}
 
-DO NOT FLAG 1% or 2% GST variance as circular trading. It is CLEAN.
-A steel company billing Rs.63,000 Cr with 1.2% variance = Rs.756 Cr timing = NORMAL.
 
-REVENUE GROWTH ALONE IS NOT A FRAUD SIGNAL.
-A company growing 8% revenue while its sector grows 5-8% is healthy, not suspicious.
+# _extract_number and _extract_percentage are now imported from
+# utils.indian_number_parser — centralized, consistent handling
+# of ₹, Lakh, Crore, Indian comma formats across ALL agents.
 
-Q4 REVENUE SPIKE THRESHOLDS (Pattern 2 — Window Dressing):
-  Q4 revenue vs monthly avg:
-  Below 30% above avg → CLEARED
-  30-60% above avg   → POSSIBLE — check if sector norm (e.g. project billing, harvest)
-  Above 60% above avg → PROBABLE — flag for investigation
-  Above 100% above avg in final 2 months before loan application → CONFIRMED
 
-RELATED PARTY TRANSACTION THRESHOLDS (Pattern 3):
-  Less than 5% of revenue  → CLEARED (normal)
-  5% to 15% of revenue    → MONITOR (flag if not board-approved or undisclosed)
-  Above 15%               → PROBABLE (investigate)
-  Above 30%               → CONFIRMED
+def _get_field_value(parser_output: str, field_name: str) -> str:
+    """Extract a field value from the structured parser output."""
+    pattern = rf'{re.escape(field_name)}:\s*(.+?)(?:\n|$)'
+    match = re.search(pattern, parser_output, re.IGNORECASE)
+    if match:
+        val = match.group(1).strip()
+        if val.upper() not in ("NOT FOUND", "NOT AVAILABLE", "NOT AVAILABLE IN DOCUMENTS"):
+            return val
+    return ""
 
-CWIP THRESHOLDS (Pattern 4 — Fake Capex):
-  CWIP as % of gross block less than 15%         → CLEARED
-  CWIP unchanged for 1 year                      → MONITOR
-  CWIP unchanged for 2+ years                   → PROBABLE (fake capex)
-  CWIP unchanged for 3+ years with no commissioning → CONFIRMED
 
-DEBTOR DAYS THRESHOLDS (Pattern 5 — Channel Stuffing):
-  Less than 90 days     → CLEARED for most sectors
-  90-120 days           → POSSIBLE — check sector norms
-  Above 120 days        → PROBABLE — investigate
-  Above 180 days        → CONFIRMED — channel stuffing or fake debtors
+def _evaluate_pattern_1_circular_trading(parser_output: str) -> tuple:
+    """Pattern 1: Circular Trading — based on GSTR variance."""
+    gstr_var_str = _get_field_value(parser_output, "GSTR1_VS_GSTR3B_VARIANCE")
+    if not gstr_var_str:
+        return "INSUFFICIENT DATA", "No GSTR variance data available in documents"
+    
+    variance = _extract_percentage(gstr_var_str)
+    if variance is None:
+        return "INSUFFICIENT DATA", f"Could not parse GSTR variance: {gstr_var_str}"
+    
+    if variance < 2:
+        return "CLEARED", f"GSTR variance {variance}% (< 2% threshold)"
+    elif variance < 5:
+        return "MONITOR", f"GSTR variance {variance}% (2-5% range)"
+    elif variance < 15:
+        return "POSSIBLE", f"GSTR variance {variance}% (5-15% range)"
+    elif variance < 40:
+        return "PROBABLE", f"GSTR variance {variance}% (15-40% range)"
+    else:
+        return "CONFIRMED", f"GSTR variance {variance}% (> 40%!)"
 
-EMI CONCEALMENT THRESHOLDS (Pattern 6 — Debt Concealment):
-  Bank EMI vs declared debt within 5%   → CLEARED
-  Gap 5-15%                             → POSSIBLE
-  Gap above 15%                         → PROBABLE
-  Zero EMI outflows on declared debt    → CONFIRMED
 
-CHEQUE BOUNCE THRESHOLDS:
-  0 bounces       → CLEARED
-  1-3 bounces     → MINOR — note, not a fraud signal
-  4-10 bounces    → POSSIBLE distress
-  10+ bounces     → PROBABLE distress or fraud
+def _evaluate_pattern_2_window_dressing(parser_output: str) -> tuple:
+    """Pattern 2: Window Dressing — based on Q4 revenue spike."""
+    # Check if we have quarterly data or monthly GST data
+    monthly_turnover = _get_field_value(parser_output, "MONTHLY_GST_TURNOVER")
+    if not monthly_turnover:
+        return "INSUFFICIENT DATA", "No quarterly/monthly revenue data available for Q4 spike analysis"
+    return "MONITOR", f"Monthly GST turnover data found: {monthly_turnover[:100]}. Manual review recommended for Q4 spike."
 
-══════════════════════════════════════════════════════════════
-THE 12 FRAUD PATTERNS YOU SCAN
-══════════════════════════════════════════════════════════════
 
-PATTERN 1: CIRCULAR TRADING / FAKE REVENUE
-Signs that qualify: GSTR-1 vs GSTR-3B variance ABOVE 5%, same counterparties in
-both sales AND purchases, ITC claims more than 40% of GST liability (not just high),
-confirmed Q4 revenue spike above 60% of monthly average.
-DO NOT FLAG: Variance below 5%, revenue growth, normal sector seasonality.
+def _evaluate_pattern_3_related_party(parser_output: str) -> tuple:
+    """Pattern 3: Related Party Diversion — based on RPT % of revenue."""
+    rpt_str = _get_field_value(parser_output, "RELATED_PARTY_TRANSACTIONS")
+    if not rpt_str:
+        return "INSUFFICIENT DATA", "No related party transaction data available"
+    
+    # Try to extract percentage
+    pct = _extract_percentage(rpt_str)
+    if pct is not None:
+        if pct < 5:
+            return "CLEARED", f"RPT at {pct}% of revenue (< 5% threshold)"
+        elif pct < 15:
+            return "MONITOR", f"RPT at {pct}% of revenue (5-15% range)"
+        elif pct < 30:
+            return "PROBABLE", f"RPT at {pct}% of revenue (15-30% range)"
+        else:
+            return "CONFIRMED", f"RPT at {pct}% of revenue (> 30%!)"
+    
+    return "MONITOR", f"RPT data found but percentage not extractable: {rpt_str[:100]}"
 
-PATTERN 2: PRE-APPLICATION WINDOW DRESSING
-Signs: Revenue spike more than 60% above monthly average in 3 months before application,
-new large customers with zero track record, suspiciously round GST numbers (e.g. exactly
-Rs.100 Cr every month for 6 months then suddenly Rs.300 Cr).
-Month-on-month stability is a CLEAN signal. Do not flag stable growing companies.
 
-PATTERN 3: DIVERSION TO RELATED PARTIES
-Signs: RPT above 15% revenue AND not board-approved or not disclosed,
-loans to subsidiaries without business purpose, purchases from promoter-owned
-vendors at above-market prices with evidence.
-Board-approved, disclosed RPT within 15% of revenue in a conglomerate = CLEARED.
+def _evaluate_pattern_4_fake_capex(parser_output: str) -> tuple:
+    """Pattern 4: Fake Capex — CWIP as percentage of gross block."""
+    cwip_pct_str = _get_field_value(parser_output, "CWIP_PERCENT_GROSS_BLOCK")
+    cwip_str = _get_field_value(parser_output, "CWIP")
+    gross_str = _get_field_value(parser_output, "GROSS_BLOCK")
+    cwip_not_cap = _get_field_value(parser_output, "CWIP_NOT_CAPITALIZED")
+    
+    # Try direct percentage first
+    pct = _extract_percentage(cwip_pct_str)
+    
+    # If not available, compute from CWIP and Gross Block
+    if pct is None and cwip_str and gross_str:
+        cwip_val = _extract_number(cwip_str)
+        gross_val = _extract_number(gross_str)
+        if cwip_val is not None and gross_val is not None and gross_val > 0:
+            pct = (cwip_val / gross_val) * 100
+    
+    if pct is None:
+        return "INSUFFICIENT DATA", "No CWIP or Gross Block data available"
+    
+    evidence = f"CWIP is {pct:.1f}% of Gross Block"
+    
+    # Check if CWIP has not been capitalized
+    if cwip_not_cap and "YES" in cwip_not_cap.upper():
+        if "3" in cwip_not_cap or "4" in cwip_not_cap or "5" in cwip_not_cap:
+            return "CONFIRMED", f"{evidence}. CWIP not capitalized for 3+ years"
+        elif "2" in cwip_not_cap:
+            return "PROBABLE", f"{evidence}. CWIP not capitalized for 2 years"
+        else:
+            return "MONITOR", f"{evidence}. CWIP not being capitalized"
+    
+    if pct < 15:
+        return "CLEARED", f"{evidence} (< 15% threshold)"
+    else:
+        return "MONITOR", f"{evidence} (>= 15%, needs capitalization timeline review)"
 
-PATTERN 4: FAKE CAPEX / ASSET INFLATION
-Signs: CWIP more than 20% of gross block AND unchanged for 2+ years,
-capex far above peers for same capacity, no increase in depreciation despite CWIP,
-no site visit confirmation of construction activity.
-Legitimate under-construction project with visit confirmation = CLEARED.
 
-PATTERN 5: CHANNEL STUFFING / AGGRESSIVE REVENUE RECOGNITION
-Signs: Debtor days above 120 and increasing more than 20 days YoY,
-confirmed Q4 revenue reversals in Q1 of next year, top 3 customers more than 60%
-of revenue, high unbilled revenue as % of total.
-Debtor days below 90 with stable trend = CLEARED.
+def _evaluate_pattern_5_channel_stuffing(parser_output: str) -> tuple:
+    """Pattern 5: Channel Stuffing — based on debtor days."""
+    debtor_str = _get_field_value(parser_output, "DEBTOR_DAYS")
+    if not debtor_str:
+        return "INSUFFICIENT DATA", "No debtor days data available"
+    
+    days = _extract_number(debtor_str)
+    if days is None:
+        return "INSUFFICIENT DATA", f"Could not parse debtor days: {debtor_str}"
+    
+    if days < 90:
+        return "CLEARED", f"Debtor days at {days:.0f} (< 90 threshold)"
+    elif days < 120:
+        return "POSSIBLE", f"Debtor days at {days:.0f} (90-120 range)"
+    elif days < 180:
+        return "PROBABLE", f"Debtor days at {days:.0f} (120-180 range)"
+    else:
+        return "CONFIRMED", f"Debtor days at {days:.0f} (> 180!)"
 
-PATTERN 6: DEBT CONCEALMENT
-Signs: EMI outflows in bank statement do not match declared debt (gap above 15%),
-zero EMI outflows despite declared loans, standalone debt far below consolidated debt
-(gap above 130%), undisclosed guarantees for subsidiaries.
-EMI match within 5% = CLEARED. Match within 15% = MONITOR not flag.
 
-PATTERN 7: INVENTORY MANIPULATION
-Signs: Inventory days increasing more than 25% YoY without matching revenue decline,
-inventory insurance value significantly below declared value,
-no independent stock audit for large inventory companies.
-Stable inventory days within sector range = CLEARED.
+def _evaluate_pattern_6_debt_concealment(parser_output: str) -> tuple:
+    """Pattern 6: Debt Concealment — EMI gap."""
+    emi_str = _get_field_value(parser_output, "DEBT_EMI_VS_DECLARED")
+    undisclosed = _get_field_value(parser_output, "UNDISCLOSED_EMI")
+    
+    if undisclosed:
+        emi_val = _extract_number(undisclosed)
+        if emi_val is not None and emi_val > 0:
+            return "PROBABLE", f"Undisclosed EMI detected: {undisclosed}"
+    
+    if not emi_str:
+        return "INSUFFICIENT DATA", "No EMI gap data available"
+    
+    if "match" in emi_str.lower() or "clear" in emi_str.lower():
+        return "CLEARED", f"EMI data matches declared debt: {emi_str[:100]}"
+    elif "mismatch" in emi_str.lower() or "gap" in emi_str.lower():
+        return "POSSIBLE", f"EMI gap detected: {emi_str[:100]}"
+    
+    return "MONITOR", f"EMI data: {emi_str[:100]}"
 
-PATTERN 8: PROMOTER PLEDGE ESCALATION
-Signs: Promoter shares pledged above 50% OR pledge % increasing YoY AND promoter
-also selling shares, pledge disclosed in BSE filings.
-Zero pledge confirmed by BSE disclosure = CLEARED.
-No data available = INSUFFICIENT DATA, not automatic flag.
 
-PATTERN 9: AUDITOR SHOPPING
-Signs: Auditor changed without clear AGM approval or without explanation,
-simultaneous CFO and auditor change in same year, switch from Big 4 to small
-unheard-of firm without stated reason.
-Continuing auditor with no change = CLEARED.
+def _evaluate_pattern_7_inventory(parser_output: str) -> tuple:
+    """Pattern 7: Inventory Manipulation — based on inventory days."""
+    inv_str = _get_field_value(parser_output, "INVENTORY_DAYS")
+    if not inv_str:
+        return "INSUFFICIENT DATA", "No inventory days data available"
+    
+    days = _extract_number(inv_str)
+    if days is None:
+        return "INSUFFICIENT DATA", f"Could not parse inventory days: {inv_str}"
+    
+    # Simple threshold check (without YoY comparison since we may not have prior year)
+    if days < 60:
+        return "CLEARED", f"Inventory days at {days:.0f} (within normal range)"
+    elif days < 120:
+        return "MONITOR", f"Inventory days at {days:.0f} (elevated, monitor)"
+    elif days < 180:
+        return "POSSIBLE", f"Inventory days at {days:.0f} (high, needs review)"
+    else:
+        return "PROBABLE", f"Inventory days at {days:.0f} (very high!)"
 
-PATTERN 10: KITE FLYING / ACCOMMODATION BILLS
-Signs: Confirmed same invoices used at multiple banks, debtor days far above
-industry average (above 150 days for non-project sectors), WC utilization
-always above 95% of limit for 12 consecutive months.
 
-PATTERN 11: COLLATERAL OVERVALUATION
-Signs: Property value more than 50% above guideline/ready reckoner value,
-valuer is known associate of promoter, multiple mortgages on same property
-confirmed, unclear title with encumbrances.
-Standard collateral with independent bank valuation = CLEARED.
+def _evaluate_pattern_8_promoter_pledge(parser_output: str) -> tuple:
+    """Pattern 8: Promoter Pledge."""
+    pledge_str = _get_field_value(parser_output, "PROMOTER_PLEDGE")
+    shareholding_str = _get_field_value(parser_output, "PROMOTER_SHAREHOLDING")
+    
+    if not pledge_str and not shareholding_str:
+        return "INSUFFICIENT DATA", "No promoter shareholding/pledge data available"
+    
+    if pledge_str:
+        pct = _extract_percentage(pledge_str)
+        if pct is not None:
+            if pct < 10:
+                return "CLEARED", f"Promoter pledge at {pct}% (< 10%)"
+            elif pct < 50:
+                return "MONITOR", f"Promoter pledge at {pct}% (10-50% range)"
+            else:
+                return "PROBABLE", f"Promoter pledge at {pct}% (> 50%!)"
+        # Check for keywords
+        if "nil" in pledge_str.lower() or "zero" in pledge_str.lower() or "0%" in pledge_str:
+            return "CLEARED", f"No promoter pledge: {pledge_str[:100]}"
+    
+    if shareholding_str:
+        return "MONITOR", f"Promoter shareholding: {shareholding_str[:100]}. Pledge data not separately available."
+    
+    return "INSUFFICIENT DATA", "Promoter pledge percentage not extractable"
 
-PATTERN 12: MANAGEMENT INCONSISTENCY
-Signs: Factory capacity reported by credit officer on site visit differs from
-management claim by more than 20%, projections don't match stated plan,
-management evasive or contradictory in interview.
-No site visit = INSUFFICIENT DATA — do not flag as suspicious by default.
 
-══════════════════════════════════════════════════════════════
-SCORING — ONLY APPLY DEDUCTIONS FOR CONFIRMED EVIDENCE
-══════════════════════════════════════════════════════════════
+def _evaluate_pattern_9_auditor_shopping(parser_output: str) -> tuple:
+    """Pattern 9: Auditor Shopping."""
+    auditor_opinion = _get_field_value(parser_output, "AUDITOR_OPINION")
+    auditor_name = _get_field_value(parser_output, "AUDITOR_NAME")
+    
+    if not auditor_opinion and not auditor_name:
+        return "INSUFFICIENT DATA", "No auditor data available"
+    
+    evidence_parts = []
+    if auditor_name:
+        evidence_parts.append(f"Auditor: {auditor_name}")
+    if auditor_opinion:
+        evidence_parts.append(f"Opinion: {auditor_opinion}")
+    
+    evidence = "; ".join(evidence_parts)
+    
+    if auditor_opinion:
+        opinion_lower = auditor_opinion.lower()
+        if "adverse" in opinion_lower:
+            return "CONFIRMED", f"Adverse audit opinion. {evidence}"
+        elif "qualified" in opinion_lower or "qualification" in opinion_lower:
+            return "POSSIBLE", f"Qualified audit opinion. {evidence}"
+        elif "emphasis" in opinion_lower:
+            return "MONITOR", f"Emphasis of matter in audit. {evidence}"
+        elif "clean" in opinion_lower or "unqualified" in opinion_lower or "unmodified" in opinion_lower:
+            return "CLEARED", f"Clean audit opinion. {evidence}"
+    
+    return "MONITOR", evidence
 
-CONFIRMED (strong evidence matching threshold above): -20 points
-PROBABLE (2+ signals, above the threshold): -12 points
-POSSIBLE (1 signal, borderline but noteworthy): -5 points
-MONITOR (borderline, needs watching, not penalised): 0 points
-CLEARED (below threshold or positive evidence): 0 points
-INSUFFICIENT DATA: 0 points — do NOT penalise for missing data
 
-REJECTION THRESHOLD:
-Only recommend rejection from fraud signals if total fraud penalties exceed -30.
-If total is -12 or less, it is PROCEED TO DEBATE — do not block on fraud grounds.
-If total is -13 to -29, it is PROCEED WITH HEIGHTENED SCRUTINY.
-If total is -30 or worse, ESCALATE FOR INVESTIGATION.
+def _evaluate_pattern_10_kite_flying(parser_output: str) -> tuple:
+    """Pattern 10: Kite Flying — WC utilization."""
+    fund_rotation = _get_field_value(parser_output, "FUND_ROTATION_FLAG")
+    
+    if fund_rotation:
+        if "YES" in fund_rotation.upper():
+            return "PROBABLE", f"Fund rotation flag raised: {fund_rotation[:100]}"
+        elif "NO" in fund_rotation.upper():
+            return "CLEARED", "No fund rotation detected in bank statements"
+    
+    return "INSUFFICIENT DATA", "No WC utilization or fund rotation data available"
 
-OUTPUT FORMAT:
 
-=== SENTINEL FRAUD DETECTION REPORT ===
+def _evaluate_pattern_11_collateral_fraud(parser_output: str) -> tuple:
+    """Pattern 11: Collateral Fraud."""
+    insurance_str = _get_field_value(parser_output, "INSURANCE_COVERAGE")
+    
+    if not insurance_str:
+        return "INSUFFICIENT DATA", "No collateral/insurance data available"
+    
+    return "MONITOR", f"Insurance/collateral data: {insurance_str[:100]}. Manual valuation verification needed."
 
-FRAUD PATTERN SCAN:
-Pattern 1 - Circular Trading: [CONFIRMED/PROBABLE/POSSIBLE/MONITOR/CLEARED/INSUFFICIENT DATA]
-  Threshold Applied: [state the threshold you used]
-  Evidence: [specific data point with number]
-  Score Impact: [0 or -X]
 
-Pattern 2 - Window Dressing: [STATUS]
-  Threshold Applied:
-  Evidence:
-  Score Impact:
+def _evaluate_pattern_12_management_inconsistency(parser_output: str) -> tuple:
+    """Pattern 12: Management Inconsistency — Capacity utilization."""
+    cap_util_str = _get_field_value(parser_output, "CAPACITY_UTILIZATION")
+    emp_vs_salary = _get_field_value(parser_output, "EMPLOYEE_VS_SALARY")
+    
+    evidence_parts = []
+    if cap_util_str:
+        evidence_parts.append(f"Capacity utilization: {cap_util_str}")
+    if emp_vs_salary:
+        evidence_parts.append(f"Employee vs salary: {emp_vs_salary}")
+    
+    if not evidence_parts:
+        return "INSUFFICIENT DATA", "No capacity utilization or employee data available for verification"
+    
+    evidence = "; ".join(evidence_parts)
+    
+    if cap_util_str:
+        pct = _extract_percentage(cap_util_str)
+        if pct is not None:
+            if pct < 20:
+                return "POSSIBLE", f"Very low capacity utilization at {pct}%. {evidence}"
+            elif pct > 100:
+                return "POSSIBLE", f"Capacity utilization exceeds 100% ({pct}%). {evidence}"
+    
+    return "MONITOR", evidence
 
-Pattern 3 - Related Party Diversion: [STATUS]
-  Threshold Applied:
-  Evidence:
-  Score Impact:
 
-Pattern 4 - Fake Capex: [STATUS]
-  Threshold Applied:
-  Evidence:
-  Score Impact:
+# Map pattern index to evaluation function
+PATTERN_EVALUATORS = {
+    0: _evaluate_pattern_1_circular_trading,
+    1: _evaluate_pattern_2_window_dressing,
+    2: _evaluate_pattern_3_related_party,
+    3: _evaluate_pattern_4_fake_capex,
+    4: _evaluate_pattern_5_channel_stuffing,
+    5: _evaluate_pattern_6_debt_concealment,
+    6: _evaluate_pattern_7_inventory,
+    7: _evaluate_pattern_8_promoter_pledge,
+    8: _evaluate_pattern_9_auditor_shopping,
+    9: _evaluate_pattern_10_kite_flying,
+    10: _evaluate_pattern_11_collateral_fraud,
+    11: _evaluate_pattern_12_management_inconsistency,
+}
 
-Pattern 5 - Channel Stuffing: [STATUS]
-  Threshold Applied:
-  Evidence:
-  Score Impact:
 
-Pattern 6 - Debt Concealment: [STATUS]
-  Threshold Applied:
-  Evidence:
-  Score Impact:
-
-Pattern 7 - Inventory Manipulation: [STATUS]
-  Threshold Applied:
-  Evidence:
-  Score Impact:
-
-Pattern 8 - Promoter Pledge: [STATUS]
-  Threshold Applied:
-  Evidence:
-  Score Impact:
-
-Pattern 9 - Auditor Shopping: [STATUS]
-  Threshold Applied:
-  Evidence:
-  Score Impact:
-
-Pattern 10 - Kite Flying: [STATUS]
-  Threshold Applied:
-  Evidence:
-  Score Impact:
-
-Pattern 11 - Collateral Fraud: [STATUS]
-  Threshold Applied:
-  Evidence:
-  Score Impact:
-
-Pattern 12 - Management Inconsistency: [STATUS]
-  Threshold Applied:
-  Evidence:
-  Score Impact:
-
-TOTAL FRAUD PENALTY: -__ points
-(Rejection threshold is -30. Current total: [X]. Status: [BELOW/AT/ABOVE] threshold.)
-
-GST VELOCITY FINGERPRINT:
-GSTR Variance %: [X%] — [CLEAN / MONITOR / PROBABLE / CONFIRMED]
-Window Dressing Probability: LOW/MEDIUM/HIGH/CONFIRMED
-Key Evidence:
-
-FRAUD and INTEGRITY SCORE: __/25
-(25 max minus fraud penalties, minimum 0)
-
-OVERALL FRAUD RISK: LOW/MEDIUM/HIGH/CRITICAL
-
-RECOMMENDATION TO COMMITTEE:
-[PROCEED TO DEBATE / PROCEED WITH HEIGHTENED SCRUTINY / ESCALATE / AUTOMATIC REJECTION]
-Reason: [1-2 sentences citing actual threshold breaches only]
-"""
+def format_fraud_report(parsed: dict) -> str:
+    """Format the parsed fraud results into a clean report."""
+    lines = ["=== QUANTISENSE FRAUD DETECTION REPORT ===\n"]
+    lines.append("FRAUD PATTERN SCAN:\n")
+    
+    for i, p in enumerate(parsed["patterns"], 1):
+        lines.append(f"Pattern {i} - {p['name']}: {p['status']}")
+        lines.append(f"  Evidence: {p['evidence']}")
+        lines.append(f"  Score Impact: {p['score_impact']}\n")
+    
+    lines.append(f"TOTAL FRAUD PENALTY: {parsed['total_penalty']} points")
+    threshold_status = "ABOVE" if parsed['total_penalty'] <= -30 else "BELOW"
+    lines.append(f"(Rejection threshold is -30. Current total: {parsed['total_penalty']}. Status: {threshold_status} threshold.)\n")
+    
+    lines.append(f"FRAUD and INTEGRITY SCORE: {parsed['fraud_score']}/25")
+    lines.append(f"OVERALL FRAUD RISK: {parsed['overall_risk']}\n")
+    lines.append(f"RECOMMENDATION TO COMMITTEE: {parsed['recommendation']}")
+    
+    return "\n".join(lines)
 
 
 def run_fraud_detector(parser_output: str, research_output: str,
@@ -245,59 +355,67 @@ def run_fraud_detector(parser_output: str, research_output: str,
                         company_tier: str = "TIER 3") -> str:
     """
     Runs the Fraud Detection Agent.
-
-    Args:
-        parser_output: Output from Document Parser Agent
-        research_output: Output from Research Agent
-        primary_notes: Credit officer's site visit / interview notes
-        company_tier: Company tier classification for threshold calibration
-
-    Returns:
-        Fraud detection report with pattern scan results
+    
+    100% DETERMINISTIC: All scoring is done by Python functions using
+    extracted field values. No LLM is used for scoring.
+    This ensures identical results for identical inputs, every time.
     """
     print("Running Fraud Detection Agent...")
 
-    tier_note = ""
-    if company_tier in ("TIER 1", "TIER 2"):
-        tier_note = f"""
-IMPORTANT — {company_tier} COMPANY CALIBRATION:
-This is a {company_tier} company (established, Big 4 audited, listed).
-Apply HEIGHTENED EVIDENCE STANDARDS before flagging:
-  - Do NOT flag patterns based on missing data alone
-  - Do NOT flag revenue growth as circular trading
-  - Do NOT flag GST variance below 5% as suspicious
-  - Only flag patterns where the actual numeric threshold above is breached
-  - INSUFFICIENT DATA = INSUFFICIENT DATA, not automatic suspicion
-  - A clean Big 4 audit provides strong assurance — factor this in
-"""
-
-    user_message = f"""
-Using the document extraction data and research intelligence below,
-scan for all 12 Indian corporate fraud patterns.
-
-MANDATORY: For each pattern, state the specific threshold you are applying
-and whether the actual data breaches that threshold. Do not flag patterns
-where the data is below the fraud threshold.
-
-If data is insufficient to assess a pattern, mark as INSUFFICIENT DATA
-with zero score impact.
-{tier_note}
-
-DOCUMENT PARSER OUTPUT:
-{parser_output[:10000]}
-
-RESEARCH INTELLIGENCE OUTPUT:
-{research_output[:10000]}
-
-PRIMARY DUE DILIGENCE NOTES (from credit officer):
-{primary_notes if primary_notes else "No primary notes provided yet."}
-"""
-
-    result = call_llm(
-        agent_name="fraud_detector",
-        system_prompt=SYSTEM_PROMPT,
-        user_message=user_message
-    )
-
+    patterns = []
+    total_penalty = 0
+    
+    # Evaluate each pattern using deterministic Python functions
+    for i, name in enumerate(PATTERN_NAMES):
+        evaluator = PATTERN_EVALUATORS[i]
+        status, evidence = evaluator(parser_output)
+        
+        # For TIER 1/2, be more lenient — don't act on MONITOR-level signals
+        if company_tier in ("TIER 1", "TIER 2"):
+            if status == "POSSIBLE":
+                # Downgrade POSSIBLE to MONITOR for established companies
+                # unless it's a really serious pattern
+                if i not in [0, 2, 5]:  # Keep POSSIBLE for circular trading, RPT, debt concealment
+                    status = "MONITOR"
+                    evidence += f" [Downgraded from POSSIBLE for {company_tier} company]"
+        
+        score_impact = SCORE_MAP.get(status, 0)
+        total_penalty += score_impact
+        
+        patterns.append({
+            "name": name,
+            "status": status,
+            "evidence": evidence,
+            "score_impact": score_impact
+        })
+    
+    # Compute fraud score (25 max, minimum 0)
+    fraud_score = max(0, 25 + total_penalty)
+    
+    # Determine risk level
+    if total_penalty <= -30:
+        overall_risk = "CRITICAL"
+        recommendation = "ESCALATE FOR INVESTIGATION"
+    elif total_penalty <= -13:
+        overall_risk = "HIGH"
+        recommendation = "PROCEED WITH HEIGHTENED SCRUTINY"
+    elif total_penalty <= -5:
+        overall_risk = "MEDIUM"
+        recommendation = "PROCEED TO DEBATE"
+    else:
+        overall_risk = "LOW"
+        recommendation = "PROCEED TO DEBATE"
+    
+    parsed = {
+        "patterns": patterns,
+        "total_penalty": total_penalty,
+        "fraud_score": fraud_score,
+        "overall_risk": overall_risk,
+        "recommendation": recommendation,
+    }
+    
+    report = format_fraud_report(parsed)
+    
+    print(f"  📊 Fraud Penalty: {total_penalty}, Score: {fraud_score}/25, Risk: {overall_risk}")
     print("Fraud Detection Complete")
-    return result
+    return report

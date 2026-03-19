@@ -1,4 +1,4 @@
-# SENTINEL Multi-Agent System - FIXES IMPLEMENTED
+# QUANTISENSE Multi-Agent System - FIXES IMPLEMENTED
 
 ## Problem Statement
 Your system was rejecting Infosys (a 44-year-old, ₹1,97,000 crore IT company listed on BSE/NSE with Big 4 auditor) for a ₹10 crore loan. This was wrong because:
@@ -231,7 +231,7 @@ Infosys loan: ₹10 crore (small for them)
 
 ### **Test Case 1: Infosys Scenario**
 ```python
-Run Sentinel with:
+Run Quantisense with:
 Company: Infosys Limited
 Promoter: Nandan Nilekani
 Sector: IT Services
@@ -242,7 +242,7 @@ Expected: APPROVED (was REJECTED before)
 
 ### **Test Case 2: Unknown Startup**
 ```python
-Run Sentinel with:
+Run Quantisense with:
 Company: TechXYZ Solutions Pvt Ltd
 Promoter: Unknown
 Sector: Software

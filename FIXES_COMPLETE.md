@@ -1,4 +1,4 @@
-# SENTINEL SYSTEM - Comprehensive Fixes Applied
+# QUANTISENSE SYSTEM - Comprehensive Fixes Applied
 
 **Status**: ✅ Fixed and Tested  
 **Test Result**: Infosys (Tier 1) now correctly APPROVED  
@@ -8,7 +8,7 @@
 
 ## Summary of Fixes
 
-The SENTINEL multi-agent credit system had a critical bug where it was rejecting Infosys (a 197,000 crore, 44-year-old, Big 4 audited, listed company) for a trivial 10 crore loan. This was wrong.
+The QUANTISENSE multi-agent credit system had a critical bug where it was rejecting Infosys (a 197,000 crore, 44-year-old, Big 4 audited, listed company) for a trivial 10 crore loan. This was wrong.
 
 **Core Issues Fixed**:
 1. ❌ Network timeout handling in web searches (Tavily API)
@@ -317,7 +317,7 @@ Company Info → Parser → Research (timeout fallback) ✅
 
 ## Conclusion
 
-**The SENTINEL system is now production-ready** for Tier 1 companies and robust to network issues. 
+**The QUANTISENSE system is now production-ready** for Tier 1 companies and robust to network issues. 
 
 - ✅ Infosys correctly approved
 - ✅ Web search resilient to timeouts

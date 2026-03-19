@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 INFOSYS LOAN DEMO — Test with mock data (no web searches needed)
-This demonstrates the fixed SENTINEL system approving Tier 1 companies correctly.
+This demonstrates the fixed QUANTISENSE system approving Tier 1 companies correctly.
 """
 
 import sys
@@ -194,27 +194,27 @@ def mock_run_all_research_searches(company_name, promoter_name, sector):
 web_search_module.search_web = mock_search_web
 web_search_module.run_all_research_searches = mock_run_all_research_searches
 
-from Orchestrator import run_sentinel
+from Orchestrator import run_quantisense
 
 def test_infosys_demo():
     """Test Infosys with mock data - should APPROVE"""
 
     print("\n" + "="*80)
-    print("   SENTINEL SYSTEM TEST - Infosys Loan Application (DEMO MODE)")
+    print("   QUANTISENSE SYSTEM TEST - Infosys Loan Application (DEMO MODE)")
     print("="*80)
     print("\nScenario: TIER 1 Company (Large established IT giant)")
     print("Company: Infosys Limited (197000 crore, Listed BSE/NSE, Big 4 auditor)")
     print("Loan Amount: 10 crore (0.005% of annual revenue - trivial)")
     print("Purpose: Working capital for expansion")
     print("\n[DEMO MODE] Using mock research data (no web API calls needed)")
-    print("[DEMO MODE] This demonstrates the fixed SENTINEL system\n")
+    print("[DEMO MODE] This demonstrates the fixed QUANTISENSE system\n")
 
     print("-" * 80)
-    print("Running SENTINEL Analysis (with Tier 1 fix)...")
+    print("Running QUANTISENSE Analysis (with Tier 1 fix)...")
     print("-" * 80 + "\n")
 
     try:
-        results = run_sentinel(
+        results = run_quantisense(
             company_name="Infosys Limited",
             promoter_name="Nandan Nilekani",
             sector="IT Services",
@@ -248,7 +248,7 @@ Well-managed company with institutional controls and proven track record.
         decision = "APPROVED ✅" if "APPROVE" in chairman_text.upper() else "REJECTED ❌"
         
         print("\n" + "="*80)
-        print(f"SENTINEL FINAL DECISION: {decision}")
+        print(f"QUANTISENSE FINAL DECISION: {decision}")
         print("="*80)
         
         # Show key sections

@@ -20,7 +20,7 @@ def mock_research(company_name, promoter_name, sector):
 ws.search_web = mock_search
 ws.run_all_research_searches = mock_research
 
-from Orchestrator import run_sentinel
+from Orchestrator import run_quantisense
 
 print("\n" + "="*80)
 print("FINAL SYSTEM VERIFICATION - All Fixes Applied")
@@ -30,7 +30,7 @@ print("\nTest: Infosys 10 crore loan application")
 print("Expected: APPROVED + CAM document saved\n")
 
 try:
-    results = run_sentinel(
+    results = run_quantisense(
         company_name="Infosys Limited",
         promoter_name="Nandan Nilekali",
         sector="IT Services",

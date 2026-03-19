@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-MULTI-TIER LOAN TEST — Demonstrates fixed SENTINEL working across all company tiers.
+MULTI-TIER LOAN TEST — Demonstrates fixed QUANTISENSE working across all company tiers.
 Shows: Tier 1 quick approval, Tier 3 standard scrutiny, realistic decisions.
 """
 
@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 print("""
 ================================================================================
-  SENTINEL LOAN DECISION ENGINE - Multi-Tier Test Suite
+  QUANTISENSE LOAN DECISION ENGINE - Multi-Tier Test Suite
 ================================================================================
 
 This test demonstrates the FIXED system working correctly across different

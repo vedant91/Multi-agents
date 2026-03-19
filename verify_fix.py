@@ -16,13 +16,13 @@ MOCK_INFOSYS = "No confirmed critical issues for Infosys Limited."
 web_search_module.search_web = lambda q, max_results=5, timeout_seconds=30: MOCK_INFOSYS
 web_search_module.run_all_research_searches = lambda company_name, promoter_name, sector: MOCK_INFOSYS
 
-from Orchestrator import run_sentinel
+from Orchestrator import run_quantisense
 
 print("\n" + "="*80)
 print("FINAL VERIFICATION: INFOSYS LOAN APPROVAL FIX")
 print("="*80 + "\n")
 
-results = run_sentinel(
+results = run_quantisense(
     company_name="Infosys Limited",
     promoter_name="Nandan Nilekani",
     sector="IT Services",
@@ -79,7 +79,7 @@ if is_approved and score_match:
     print("   - Score: 99/100 (Tier 1 bonus applied)")
     print("   - Decision enforced by chairman override")
     print("   - All fixes working as designed")
-    print("\n   SENTINEL is now perfect! 🚀")
+    print("\n   QUANTISENSE is now perfect! 🚀")
 else:
     print("\n⚠️ PARTIAL SUCCESS")
     print(f"  - Approved: {is_approved}")

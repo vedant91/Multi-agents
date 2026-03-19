@@ -7,182 +7,38 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.llm_client import call_llm
 from utils.web_search import run_all_research_searches
 
-SYSTEM_PROMPT = """
-You are SENTINEL's Research Intelligence Agent — a Digital Investigator
-who finds what the borrower did NOT put in their documents.
+# Condensed system prompt to save tokens (~1200 tokens instead of ~2500)
+SYSTEM_PROMPT = """You are QUANTISENSE's Research Intelligence Agent.
 
-════════════════════════════════════════════════════════════
-ANTI-HALLUCINATION RULES — NON-NEGOTIABLE, READ FIRST
-════════════════════════════════════════════════════════════
+ANTI-HALLUCINATION RULES (NON-NEGOTIABLE):
+1. ONLY report facts EXPLICITLY stated in the search results below. If not found → "NOT FOUND IN SEARCH RESULTS".
+2. Every finding needs a short quote (<15 words) + source domain + date.
+3. Automatic rejection triggers (wilful defaulter, NCLT, SEBI debarment) need OFFICIAL source confirmation (rbi.org.in, nclt.gov.in, sebi.gov.in). News alone is NOT enough.
+4. Distinguish allegations from confirmed facts. Use "alleged", "under investigation" for unconfirmed.
+5. When in doubt → UNVERIFIED. Better to miss a red flag than invent one.
 
-RULE 1 — ONLY CITE WHAT IS IN THE SEARCH RESULTS (STRICTLY ENFORCED)
-You will be given raw web search results below.
-ONLY report facts that appear WORD-FOR-WORD or clearly stated in those results.
-If a fact is not in the search results → write "NOT FOUND IN SEARCH RESULTS".
-NEVER generate, infer, assume, or imagine findings.
-CRITICAL: If you find yourself thinking "this company probably..." STOP.
-That is hallucination. Only report what is explicitly stated in search results.
+SEVERITY: 🔴 HIGH (official source confirmed) | 🟠 MEDIUM (litigation, downgrade, regulatory fine) | 🟡 LOW (unverified news, minor disputes)
 
-RULE 2 — EVERY FINDING NEEDS A QUOTE + SOURCE
-For every finding you report, you MUST provide:
-  - An exact short quote (under 15 words) from the search result
-  - The source website domain (e.g., rbi.org.in, economictimes.com)
-  - Approximate date if available
-If you cannot find a quote → the finding is UNVERIFIED → do NOT report it.
+OUTPUT FORMAT:
+=== QUANTISENSE RESEARCH INTELLIGENCE REPORT ===
 
-RULE 3 — AUTOMATIC REJECTION TRIGGERS NEED EXTRA PROOF
-For the most serious triggers (wilful defaulter, NCLT, SEBI debarment):
-  - Require the finding to appear in at least ONE official/government source
-    (rbi.org.in, nclt.gov.in, sebi.gov.in, mca.gov.in)
-  - A news article ALONE is NOT enough to confirm an automatic rejection trigger
-  - If only news articles mention it → mark as UNVERIFIED, NOT CONFIRMED
-  - A large listed company audited by Big 4 cannot be a wilful defaulter
-    (they have zero bank debt by definition — verify this first)
+⛔ AUTOMATIC REJECTION TRIGGERS: [NONE FOUND or list with official source quote]
 
-RULE 3B — LARGE LISTED COMPANIES (₹1000Cr+ revenue, Big 4 auditors)
-  For Tier 1 companies (Infosys, TCS, HDFC, Reliance, etc.):
-  - ONLY flag findings from official sources (RBI, NCLT, SEBI websites)
-  - News articles reporting prosecution/investigations = ALLEGED, not confirmed
-  - These companies are institutionalized and transparent
-  - If you find NO official sources confirming a finding → it is UNVERIFIED
-  - Default assumption: these companies are legitimate unless PROVEN otherwise
+🔴 CRITICAL FINDINGS: Finding | Quote | Source | Date | Score Impact: -X pts
+🟠 NOTABLE FINDINGS: Finding | Quote | Source | Date | Score Impact: -X pts
+🟡 INFORMATIONAL: Brief notes with source
+⚠️ UNVERIFIED ALLEGATIONS: [list — do NOT trigger rejection]
 
-RULE 4 — DISTINGUISH ALLEGATIONS FROM CONFIRMED FACTS
-  - Investigation announced → ALLEGED, not confirmed
-  - Charge sheet filed → ALLEGED
-  - Court conviction or official order → CONFIRMED
-  - Settlement with SEBI for process lapse → NOT the same as fraud conviction
-  - GST notice issued → ALLEGED, company may be contesting
-  Use language carefully: "alleged", "under investigation", "contested"
-
-RULE 5 — WHEN IN DOUBT, MARK AS UNVERIFIED
-It is BETTER to miss a real red flag than to invent a fake one.
-A false automatic rejection ruins a legitimate business and exposes the bank to liability.
-Write "UNVERIFIED — requires manual check at [official source]" for any uncertain finding.
-
-RULE 6 — REALITY CHECK BEFORE WRITING
-Before flagging any automatic rejection trigger, ask:
-  Q: Does the company have bank borrowings? If NO → wilful defaulter is impossible.
-  Q: Is the company profitable and cash-positive? If YES → NCLT insolvency is unlikely.
-  Q: Is the SEBI order a debarment or just a settlement/fine? These are very different.
-  Q: Is the company listed on BSE/NSE with Big 4 auditor? If YES → higher evidence bar needed.
-If your finding fails these reality checks → mark as UNVERIFIED.
-
-════════════════════════════════════════════════════════════
-YOUR ACTUAL JOB — AFTER FOLLOWING THE RULES ABOVE
-════════════════════════════════════════════════════════════
-
-You receive raw web search results. Analyze them to:
-1. Identify significant findings with cited evidence
-2. Classify each finding by severity (HIGH / MEDIUM / LOW)
-3. Detect automatic rejection triggers (only if officially confirmed)
-4. Assess sector risk from industry news
-5. Profile the promoter network risk
-6. Track news sentiment over last 18 months
-
-SEVERITY CLASSIFICATION:
-
-🔴 HIGH — Potential automatic rejection trigger
-   ONLY if confirmed by official source (RBI list, NCLT order, SEBI order, court judgment)
-   Examples: Confirmed wilful defaulter on RBI list, active CIRP order from NCLT,
-             SEBI debarment order (not just fine), convicted by court for fraud
-
-🟠 MEDIUM — Requires deeper investigation or stricter covenants
-   Examples: Bank litigation (civil, not criminal), ROC notice, management exits,
-             rating downgrade, contested GST demand, regulatory fine (not debarment)
-
-🟡 LOW — Monitor but not blocking
-   Examples: Negative news unverified, industry headwinds, minor civil disputes,
-             expired or settled regulatory matters, allegations without charges
-
-AUTOMATIC REJECTION TRIGGERS — FLAG ONLY IF OFFICIALLY CONFIRMED:
-  - Company or promoter on RBI Wilful Defaulter published list (rbi.org.in)
-  - Active NCLT insolvency / CIRP proceedings (nclt.gov.in order exists)
-  - SEBI DEBARMENT order (not a mere fine or settlement)
-  - ED / CBI / SFIO investigation with charge sheet filed (not just initiated)
-  - GST registration CANCELLED for fraud (not just demand notice)
-  - NPA declared by scheduled commercial bank in writing (last 3 years)
-
-NOT automatic rejection triggers (common mistakes):
-  ✗ GST demand notice — this is a dispute, not a cancellation
-  ✗ SEBI fine or settlement — not the same as debarment
-  ✗ News article alleging fraud without official order
-  ✗ Old resolved matters (more than 5 years ago, settled)
-  ✗ Civil litigation that is ongoing but unresolved
-
-════════════════════════════════════════════════════════════
-OUTPUT FORMAT
-════════════════════════════════════════════════════════════
-
-=== SENTINEL RESEARCH INTELLIGENCE REPORT ===
-
-HALLUCINATION GUARD STATUS:
-All findings below are supported by quoted text from search results.
-Findings without search result support have been excluded.
-
-⛔ AUTOMATIC REJECTION TRIGGERS:
-[NONE FOUND — state this clearly if nothing confirmed]
-[OR list only officially-confirmed triggers with quote + official source URL]
-
-🔴 CRITICAL FINDINGS (HIGH SEVERITY — confirmed with source):
-Finding: [what was found]
-Quote from search: "[exact short quote under 15 words]"
-Source: [domain name]
-Date: [if available]
-Reality check passed: YES/NO
-Credit Score Impact: -X points
-
-🟠 NOTABLE FINDINGS (MEDIUM SEVERITY — confirmed with source):
-Finding: [what was found]
-Quote from search: "[exact short quote under 15 words]"
-Source: [domain name]
-Date: [if available]
-Credit Score Impact: -X points
-
-🟡 INFORMATIONAL (LOW — noted but not penalized):
-[Brief factual notes with source]
-
-⚠️ UNVERIFIED ALLEGATIONS (found in news but not officially confirmed):
-[List here — these do NOT trigger automatic rejection but should be manually verified]
-Manual check recommended at: [official source URL]
-
-🕸️ PROMOTER NETWORK RISK:
-Risk Level: LOW / MEDIUM / HIGH / CRITICAL
-Key Concern: [1 sentence — only if evidence found]
-Entities flagged: [list only if search results mention them]
-
-📊 SECTOR RISK CARD:
-Sector: [name] | Risk Level: LOW / MEDIUM / HIGH
-Key Risk 1: [from search results]
-Key Risk 2: [from search results]
-Key Risk 3: [from search results]
-Tailwind: [positive sector news if found]
-
-📰 NEWS SENTIMENT:
-Last 18 months: Positive / Neutral / Negative ratio estimate
-Trend: IMPROVING / STABLE / DETERIORATING
-Most significant headline: [title + source + approximate date]
+🕸️ PROMOTER NETWORK RISK: LOW/MEDIUM/HIGH/CRITICAL
+📊 SECTOR RISK: Sector | Risk Level | Key risks
+📰 NEWS SENTIMENT: Positive/Neutral/Negative | Trend | Key headline
 
 EXTERNAL INTELLIGENCE SCORE: __/20
-Scoring:
-  Start at 20. Deduct only for CONFIRMED findings with cited sources.
-  HIGH finding: -4 to -8 points each
-  MEDIUM finding: -2 to -4 points each
-  UNVERIFIED finding: 0 points (cannot penalize unconfirmed)
-  Clean search results: Full 20 points
+(Start at 20. HIGH: -4 to -8, MEDIUM: -2 to -4, UNVERIFIED: 0 pts)
 
-RESEARCH CONFIDENCE: HIGH / MEDIUM / LOW
-  HIGH = Multiple reliable sources found, findings well-supported
-  MEDIUM = Some sources found, some gaps
-  LOW = Very few results — this itself may indicate low public presence risk
-        OR company is private/small with limited coverage
-
-DATA GAPS (important things you could NOT find and why):
-[List what you searched for but could not verify]
-
-OVERALL VERDICT:
-[2-3 sentences. Be conservative. Distinguish confirmed facts from allegations.
-State explicitly if automatic rejection triggers were NOT found.]
+RESEARCH CONFIDENCE: HIGH/MEDIUM/LOW
+DATA GAPS: [what you couldn't find]
+OVERALL VERDICT: [2-3 sentences, conservative, cite facts only]
 """
 
 
@@ -193,7 +49,7 @@ def run_research_agent(company_name: str, promoter_name: str, sector: str) -> tu
     Args:
         company_name: Full company name
         promoter_name: Primary promoter / MD name
-        sector: Industry sector (e.g., "steel manufacturing", "NBFC", "real estate")
+        sector: Industry sector
 
     Returns:
         Tuple of (research_report: str, raw_search_results: str)
@@ -208,28 +64,42 @@ def run_research_agent(company_name: str, promoter_name: str, sector: str) -> tu
         sector=sector
     )
 
-    # Step 2: Feed to LLM for analysis
-    user_message = f"""
-Analyze these web search results about:
-Company: {company_name}
-Promoter: {promoter_name}
-Sector: {sector}
+    # Step 2: Truncate search results to fit within context limit
+    # System prompt is ~1200 tokens, user prompt template ~200 tokens
+    # Available for search results: ~4800 tokens ≈ 19,200 chars
+    # But we also need completion room, so use ~14,000 chars
+    max_search_chars = 14000
+    
+    if len(raw_search_results) > max_search_chars:
+        print(f"  ⚠️  Search results too long ({len(raw_search_results)} chars), truncating to {max_search_chars}")
+        # Keep the most important results (early queries are critical checks)
+        truncated_results = raw_search_results[:max_search_chars]
+        # Try to end at a clean boundary
+        last_newline = truncated_results.rfind('\n')
+        if last_newline > max_search_chars * 0.8:
+            truncated_results = truncated_results[:last_newline]
+    else:
+        truncated_results = raw_search_results
 
-IMPORTANT INSTRUCTIONS:
-- Read the raw search results carefully before writing anything
-- Every finding you report MUST have a direct quote from the text below
-- If you cannot find a quote for a finding → DO NOT include it
-- For automatic rejection triggers (wilful defaulter, NCLT, SEBI debarment):
-  only flag if the search results contain an OFFICIAL source confirming it
-- If the company has zero bank debt (common for IT/cash-rich companies):
-  wilful defaulter and NPA triggers are IMPOSSIBLE — skip them entirely
-- Unverified allegations from news go in the UNVERIFIED section, NOT in confirmed findings
+    # Step 3: Feed to LLM for analysis
+    user_message = f"""Analyze these web search results about:
+Company: {company_name} | Promoter: {promoter_name} | Sector: {sector}
 
-RAW SEARCH RESULTS (your only source of truth):
-{raw_search_results[:18000]}
+STRICT RULES (NON-NEGOTIABLE):
+- Every finding MUST have a direct quote from the text below
+- No quote → do NOT include the finding
+- Automatic rejection triggers need OFFICIAL source confirmation
+- Unverified allegations → UNVERIFIED section only
+- If company has zero bank debt → wilful defaulter/NPA are IMPOSSIBLE
+- Start your response with: === QUANTISENSE RESEARCH INTELLIGENCE REPORT ===
+- Follow the EXACT output format from your instructions, section by section
+- Do NOT add extra sections or change the format
 
-Now produce the research intelligence report following the output format.
-Remember: conservative and cited is better than comprehensive and hallucinated.
+RAW SEARCH RESULTS:
+{truncated_results}
+
+Produce the research intelligence report following the EXACT output format specified in your instructions.
+Start with: === QUANTISENSE RESEARCH INTELLIGENCE REPORT ===
 """
 
     result = call_llm(
@@ -240,3 +110,9 @@ Remember: conservative and cited is better than comprehensive and hallucinated.
 
     print("Research Agent Complete")
     return result, raw_search_results
+
+
+if __name__ == "__main__":
+    # Quick test
+    report, raw = run_research_agent("Test Company", "Test Promoter", "manufacturing")
+    print(report[:500])

@@ -1,4 +1,4 @@
-# Quick Start Guide — Using Fixed SENTINEL System
+# Quick Start Guide — Using Fixed QUANTISENSE System
 
 ## What Was Fixed
 
@@ -24,7 +24,7 @@ streamlit run app.py
 Then:
 1. Fill in company details
 2. Upload financial documents (if you have them)
-3. Click "RUN SENTINEL ANALYSIS"
+3. Click "RUN QUANTISENSE ANALYSIS"
 4. Get decision + full report
 
 ### Option 2: Test Script (Quick Verification)
@@ -38,9 +38,9 @@ This runs Infosys scenario to verify the system correctly approves it.
 ### Option 3: Python API
 
 ```python
-from Orchestrator import run_sentinel
+from Orchestrator import run_quantisense
 
-results = run_sentinel(
+results = run_quantisense(
     company_name="Infosys Limited",
     promoter_name="Nandan Nilekani",
     sector="it services",
@@ -127,7 +127,7 @@ Then: CONDITIONAL APPROVAL or REFER
 ### Test 1: Established IT Company (Expected: APPROVE)
 
 ```python
-results = run_sentinel(
+results = run_quantisense(
     company_name="Infosys Limited",
     promoter_name="Nandan Nilekani",
     sector="it services",
@@ -147,7 +147,7 @@ results = run_sentinel(
 ### Test 2: Unknown Small Startup (Expected: CONDITIONAL)
 
 ```python
-results = run_sentinel(
+results = run_quantisense(
     company_name="TechStartup XYZ Pvt Ltd",
     promoter_name="Unknown Founder",
     sector="software",
@@ -322,4 +322,4 @@ If you encounter issues:
 - Speculative concerns don't cause rejection
 - Infosys scenario now APPROVES (as it should)
 
-**You can now use SENTINEL confidently for real loan decisions.**
+**You can now use QUANTISENSE confidently for real loan decisions.**

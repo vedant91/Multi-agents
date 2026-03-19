@@ -20,16 +20,16 @@ def mock_research(company_name, promoter_name, sector):
 ws.search_web = mock_search
 ws.run_all_research_searches = mock_research
 
-from Orchestrator import run_sentinel
+from Orchestrator import run_quantisense
 
 print("="*80)
 print("CAM DOCUMENT SAVE TEST")
 print("="*80 + "\n")
 
-print("Running SENTINEL analysis for Infosys...\n")
+print("Running QUANTISENSE analysis for Infosys...\n")
 
 try:
-    results = run_sentinel(
+    results = run_quantisense(
         company_name="Infosys Limited",
         promoter_name="Nandan Nilekali",
         sector="IT Services",

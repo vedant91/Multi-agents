@@ -1,7 +1,9 @@
 google-generativeai==0.7.2
 groq==0.9.0
 tavily-python==0.3.3
-streamlit==1.35.0
+fastapi>=0.110.0
+uvicorn>=0.29.0
+python-multipart>=0.0.9
 pdfplumber==0.11.0
 python-docx==1.1.2
 pandas==2.2.2
@@ -12,3 +14,7 @@ networkx==3.3
 matplotlib==3.9.0
 requests==2.32.3
 openpyxl==3.1.4
+
+# Optional: For scanned PDF OCR support (also needs: brew install tesseract poppler)
+# pdf2image>=1.16.3
+# pytesseract>=0.3.10

@@ -4,7 +4,7 @@ import sys
 # Ensure proper path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from Orchestrator import run_sentinel
+from Orchestrator import run_quantisense
 
 def mock_progress(step, pct):
     print(f"Progress: {step} ({pct}%)", flush=True)
@@ -12,7 +12,7 @@ def mock_progress(step, pct):
 if __name__ == "__main__":
     print("Testing backend orchestrator...", flush=True)
     try:
-        results = run_sentinel(
+        results = run_quantisense(
             company_name="Dummy Corp",
             promoter_name="John Doe",
             sector="it services",
