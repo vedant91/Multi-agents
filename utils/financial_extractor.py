@@ -28,12 +28,19 @@ def _get_numbers_from_vicinity(text: str, keyword: str,
         # Take the surrounding window
         snippet = text[idx: idx + search_window]
 
-        # Find all numbers
-        raw = re.findall(r'(-?|\()(\d{1,3}(?:,\d{2,3})*(?:\.\d+)?|\d+(?:\.\d+)?)(\)?)', snippet)
+        # Pre-filter dates to avoid grabbing 31.03.2024 or years as values
+        cleaned = re.sub(r'\b\d{1,2}\.\d{2}\.\d{2,4}\b', ' ', snippet)
+        cleaned = re.sub(r'\b\d{4}-\d{2}-\d{2}\b', ' ', cleaned)
+        cleaned = re.sub(r'\b(?:2022|2023|2024|2025|2026)\b', ' ', cleaned)
+
+        # Find all numbers, permitting OCR spaces around decimals
+        raw = re.findall(r'(-?|\()(\d{1,3}(?:,\d{2,3})+(?:\s*\.\s*\d+)?|\d+(?:\s*\.\s*\d+)?)(\)?)', cleaned)
         numbers = []
         for sign, num_str, _ in raw:
             try:
-                val = float(num_str.replace(',', ''))
+                # Remove spaces and commas
+                clean_num = num_str.replace(',', '').replace(' ', '')
+                val = float(clean_num)
                 if sign in ('-', '('):
                     val = -val
                     
@@ -164,8 +171,8 @@ def _extract_standalone_summary(annual_text: str) -> dict:
             # Get numbers between 2024 and 2025 -- these are the confident data values
             between = snippet[pos_2024 + 4: pos_2025]
             between_nums = []
-            for n in re.findall(r'(\d{1,3}(?:,\d{2,3})*(?:\.\d+)?)', between):
-                val = float(n.replace(',', ''))
+            for n in re.findall(r'(\d{1,3}(?:,\d{2,3})+(?:\s*\.\s*\d+)?|\d+(?:\s*\.\s*\d+)?)', between):
+                val = float(n.replace(',', '').replace(' ', ''))
                 if val > 1000:
                     between_nums.append(val)
                     claimed_nums.add(val)
@@ -176,10 +183,10 @@ def _extract_standalone_summary(annual_text: str) -> dict:
                 summary[key] = [between_nums[0]]
         else:
             # Fallback: grab large non-year numbers
-            nums_raw = re.findall(r'(\d{1,3}(?:,\d{2,3})*(?:\.\d+)?)', snippet)
+            nums_raw = re.findall(r'(\d{1,3}(?:,\d{2,3})+(?:\s*\.\s*\d+)?|\d+(?:\s*\.\s*\d+)?)', snippet)
             nums = []
             for n in nums_raw:
-                val = float(n.replace(',', ''))
+                val = float(n.replace(',', '').replace(' ', ''))
                 if val > 1000 and val not in (2024, 2025, 2023, 2022):
                     nums.append(val)
                     claimed_nums.add(val)
@@ -190,8 +197,8 @@ def _extract_standalone_summary(annual_text: str) -> dict:
 
     # Pass 2: Collect stray numbers and fill missing FY24 slots
     stray_nums = []
-    for n in re.findall(r'(\d{1,3}(?:,\d{2,3})*(?:\.\d+)?)', summary_section):
-        val = float(n.replace(',', ''))
+    for n in re.findall(r'(\d{1,3}(?:,\d{2,3})+(?:\s*\.\s*\d+)?|\d+(?:\s*\.\s*\d+)?)', summary_section):
+        val = float(n.replace(',', '').replace(' ', ''))
         # keep non-round numbers (not divisible by 1000) that haven't been claimed yet
         if val > 1000 and val not in (2024, 2025, 2023, 2022) and val % 1000 != 0 and val not in claimed_nums:
             stray_nums.append(val)
@@ -220,8 +227,8 @@ def _extract_standalone_summary(annual_text: str) -> dict:
             if m:
                 snip = pl_candidate[m.start():m.start()+250]
                 nums = []
-                for n in re.findall(r'(\d{1,}(?:,\d{2,3})*(?:\.\d+)?)', snip):
-                    val = float(n.replace(',', ''))
+                for n in re.findall(r'(\d{1,3}(?:,\d{2,3})+(?:\s*\.\s*\d+)?|\d+(?:\s*\.\s*\d+)?)', snip):
+                    val = float(n.replace(',', '').replace(' ', ''))
                     # Skip years, and skip the note reference numbers like '27' or '32'
                     if val >= min_v and val not in (2025, 2024, 2023, 2022) and val not in (26, 27, 28, 29, 30, 31, 32, 33):
                         nums.append(val)
