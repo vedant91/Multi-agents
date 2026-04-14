@@ -4,7 +4,7 @@
 import sys, os, time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from agents.document_parser import run_document_parser
 from agents.research_agent import run_research_agent
@@ -67,13 +67,13 @@ def run_sentinel(
             result = func(*args, **kwargs)
             elapsed = time.time() - start
             timing[name] = round(elapsed, 1)
-            print(f"  ✅ {name} completed in {elapsed:.1f}s")
+            print(f"  [SUCCESS] {name} completed in {elapsed:.1f}s")
             return result
         except Exception as e:
             elapsed = time.time() - start
             timing[name] = round(elapsed, 1)
             error_msg = f"[AGENT ERROR - {name}]: {str(e)}"
-            print(f"  ❌ {name} failed after {elapsed:.1f}s: {e}")
+            print(f"  [FAIL] {name} failed after {elapsed:.1f}s: {e}")
             return error_msg
 
     loan_details = {
@@ -97,15 +97,15 @@ def run_sentinel(
         combined_text = combine_all_documents(extracted_docs)
     else:
         combined_text = f"No documents uploaded. Company: {company_name}, Sector: {sector}"
-        print("⚠️  Warning: No documents uploaded. Analysis will be based on research only.")
+        print("[WARN]  Warning: No documents uploaded. Analysis will be based on research only.")
 
     # ──────────────────────────────────────────────────────────
     # STEP 2: Document Parser Agent
     # ──────────────────────────────────────────────────────────
     update_progress("Parsing financial documents...", 15)
-    parser_output = timed_run("Document Parser", run_document_parser, combined_text)
+    parser_output = timed_run("Document Parser", run_document_parser,
+                               combined_text, extracted_docs if uploaded_files else {})
     outputs['parser'] = parser_output
-    time.sleep(1.5)  # Rate limiting between agents
 
     # ──────────────────────────────────────────────────────────
     # STEP 3: Research Intelligence Agent
@@ -121,7 +121,6 @@ def run_sentinel(
         research_output = research_result
         raw_search_results = ""
     outputs['research'] = research_output
-    time.sleep(1.5)  # Rate limiting between agents
 
     # ──────────────────────────────────────────────────────────
     # STEP 3B: Company Intelligence Agent
@@ -149,7 +148,6 @@ def run_sentinel(
     update_progress("Fact-checking research findings...", 40)
     fact_check_output = timed_run("Fact Checker", run_fact_checker, research_output, raw_search_results)
     outputs['fact_check'] = fact_check_output
-    time.sleep(1.5)  # Rate limiting between agents
 
     # ──────────────────────────────────────────────────────────
     # STEP 4: Fraud Detection Agent (now tier-aware)
@@ -157,7 +155,6 @@ def run_sentinel(
     update_progress("Running fraud pattern detection...", 48)
     fraud_output = timed_run("Fraud Detector", run_fraud_detector, parser_output, research_output, primary_notes, company_tier)
     outputs['fraud'] = fraud_output
-    time.sleep(1.5)  # Rate limiting between agents
 
     # ──────────────────────────────────────────────────────────
     # STEPS 5 & 6: Bull + Bear Agents (RUN IN PARALLEL!)
@@ -180,7 +177,6 @@ def run_sentinel(
     
     outputs['bull'] = bull_output
     outputs['bear'] = bear_output
-    time.sleep(1.5)  # Rate limiting between agents
 
     # ──────────────────────────────────────────────────────────
     # STEP 7: Chairman Agent — Final Decision
@@ -197,7 +193,6 @@ def run_sentinel(
         company_intelligence=company_intel
     )
     outputs['chairman'] = chairman_output
-    time.sleep(1.5)  # Rate limiting between agents
 
     # ──────────────────────────────────────────────────────────
     # STEP 8: Stress Test Agent
@@ -205,7 +200,6 @@ def run_sentinel(
     update_progress("Running stress test simulations...", 82)
     stress_output = timed_run("Stress Test", run_stress_test, parser_output, chairman_output, loan_details)
     outputs['stress_test'] = stress_output
-    time.sleep(1.5)  # Rate limiting between agents
 
     # ──────────────────────────────────────────────────────────
     # STEP 9: CAM Generator — Final Document
@@ -262,4 +256,4 @@ if __name__ == "__main__":
     print("CHAIRMAN'S VERDICT PREVIEW:")
     print("="*60)
     print(results['chairman'][:1000])
-    print(f"\n✅ Full CAM saved to: {results['cam_doc_path']}")
+    print(f"\n[SUCCESS] Full CAM saved to: {results['cam_doc_path']}")

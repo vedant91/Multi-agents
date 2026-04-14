@@ -10,7 +10,7 @@ CEREBRAS_API_KEY = os.getenv("GROQ_API_KEY") or os.getenv("CEREBRAS_API_KEY")
 
 # ── RATE LIMITING FOR FREE TIER ────────────────────────────────
 _last_call_time = {"llama3.1-8b": 0}
-CEREBRAS_FREE_TIER_DELAY = 1.0  # seconds between calls
+CEREBRAS_FREE_TIER_DELAY = 0.5  # seconds between calls (reduced from 1.0)
 
 # ── CONFIRMED ACTIVE CEREBRAS MODELS ────────────────
 # llama3.1-8b   → Fast (fast and heavy agents)
@@ -18,8 +18,9 @@ CEREBRAS_FREE_TIER_DELAY = 1.0  # seconds between calls
 
 def call_cerebras(system_prompt: str, user_message: str,
               model: str = "llama3.1-8b",
-              max_tokens: int = 150000) -> str:
-    """Call Cerebras API with rate limiting using native requests, unlimited context."""
+              max_tokens: int = 150000,
+              max_completion_tokens: int = 1200) -> str:
+    """Call Cerebras API with rate limiting. max_completion_tokens controls output length."""
     import time
     import requests
 
@@ -36,13 +37,8 @@ def call_cerebras(system_prompt: str, user_message: str,
         "Content-Type": "application/json"
     }
 
-    # ── INJECT GLOBAL FINANCIAL AWARENESS PROMPT ────────────────
-    global_financial_prompt = """
-[CRITICAL INSTRUCTION: MONETARY UNIT DETECTION]
-Whenever you analyze financial amounts (Loan Amount, Revenue, EBITDA, Debt, etc.), they may be provided in different units across documents (e.g., exact Rupees [₹1,00,00,000], Lakhs [100 Lakhs], or Crores [1 Crore]). 
-You MUST independently detect, analyze, and state the unit being used. Always standardize the magnitude in your head before comparing numbers (e.g., realize that '10 Crores' is 100,000,000 Rupees). Do not make mathematically flawed rejection arguments by confusing an absolute Rupee figure for a Crore figure, or vice versa. Always evaluate the scale accurately.
-"""
-    system_prompt = system_prompt + "\n" + global_financial_prompt
+    # Do NOT inject global_financial_prompt -- it adds unnecessary tokens
+    # each agent's own prompt already handles unit detection where needed
 
     for attempt in range(max_retries):
         try:
@@ -53,9 +49,8 @@ You MUST independently detect, analyze, and state the unit being used. Always st
                     {"role": "system", "content": system_prompt},
                     {"role": "user",   "content": user_message}
                 ],
-                "temperature": 0.3
-                # Removed max_completion_tokens completely to allow default unlimited 
-                # completion sizing depending on context limits.
+                "temperature": 0.3,
+                "max_completion_tokens": max_completion_tokens
             }
             # Use high timeout for very deep searches
             response = requests.post(url, headers=headers, json=payload, timeout=600)
@@ -72,26 +67,26 @@ You MUST independently detect, analyze, and state the unit being used. Always st
             err = str(e)
             if "413" in err or "429" in err or "50" in err:
                 wait = 65 if "429" in err else 2 ** (attempt + 1)  # 65s for token per min rate limit if 429
-                print(f"  ⚠️  Rate limit/Error on {model} (attempt {attempt+1}/{max_retries}), waiting {wait}s...")
+                print(f"  [WARN]  Rate limit/Error on {model} (attempt {attempt+1}/{max_retries}), waiting {wait}s...")
                 time.sleep(wait)
             else:
                 return f"[CEREBRAS ERROR]: {err}"
     return f"[CEREBRAS ERROR]: Max retries exceeded"
 
 
-def call_llm(agent_name: str, system_prompt: str, user_message: str) -> str:
+def call_llm(agent_name: str, system_prompt: str, user_message: str,
+             max_completion_tokens: int = 1200) -> str:
     """
-    Smart router using Cerebras llama3.1-8b model. NO LIMITS ON TOKENS.
+    Smart router using Cerebras llama3.1-8b model.
+    max_completion_tokens: controls response length. Set lower for speed.
     """
     import time
 
     start = time.time()
-
-    # We use llama3.1-8b for everything since it is fast and available
-    result = call_cerebras(system_prompt, user_message, model="llama3.1-8b")
-
+    result = call_cerebras(system_prompt, user_message, model="llama3.1-8b",
+                           max_completion_tokens=max_completion_tokens)
     elapsed = time.time() - start
-    print(f"  ⏱️  {agent_name} LLM call: {elapsed:.1f}s")
+    print(f"  [TIME]  {agent_name} LLM call: {elapsed:.1f}s")
     return result
 
 # ── TEST ─────────────────────────────────────────────────────
@@ -106,4 +101,4 @@ if __name__ == "__main__":
     )
     print(f"   {r2[:80]}\n")
 
-    print("✅ Model ready. SENTINEL is go!")
+    print("[SUCCESS] Model ready. SENTINEL is go!")

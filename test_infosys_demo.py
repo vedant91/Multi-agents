@@ -188,7 +188,7 @@ def mock_search_web(query, max_results=5, timeout_seconds=30):
 
 def mock_run_all_research_searches(company_name, promoter_name, sector):
     """Returns all mock research for demo"""
-    print("  🔍 [DEMO MODE] Using mock Infosys research data (no web API calls)")
+    print("  [SEARCH] [DEMO MODE] Using mock Infosys research data (no web API calls)")
     return MOCK_INFOSYS_RESEARCH
 
 web_search_module.search_web = mock_search_web
@@ -226,17 +226,17 @@ def test_infosys_demo():
 Site Visit Report dated 06/03/2026 — Infosys HQ, Bangalore.
 
 Observations:
-✓ Modern 25-story headquarters with state-of-the-art infrastructure
-✓ HR reports 320,000+ employees globally, 100,000+ in India
-✓ Full capacity operations - expansion underway
-✓ Financial team transparent - shared latest quarterly results
-✓ Management: CEO Vishal Sikka (20yr+ IT industry), CFO stable
+ Modern 25-story headquarters with state-of-the-art infrastructure
+ HR reports 320,000+ employees globally, 100,000+ in India
+ Full capacity operations - expansion underway
+ Financial team transparent - shared latest quarterly results
+ Management: CEO Vishal Sikka (20yr+ IT industry), CFO stable
 
 Management Interview:
-✓ Company in growth phase, expanding AI/cloud service delivery
-✓ Client base: 97% Fortune 500 companies
-✓ Contract diversification: No customer >5% of revenue
-✓ New AI centers being opened in India
+ Company in growth phase, expanding AI/cloud service delivery
+ Client base: 97% Fortune 500 companies
+ Contract diversification: No customer >5% of revenue
+ New AI centers being opened in India
 
 Conclusion: Credit officer assessment = STRONG APPROVAL recommended.
 Well-managed company with institutional controls and proven track record.
@@ -245,7 +245,7 @@ Well-managed company with institutional controls and proven track record.
 
         # Extract decision from chairman output
         chairman_text = results.get('chairman', '')
-        decision = "APPROVED ✅" if "APPROVE" in chairman_text.upper() else "REJECTED ❌"
+        decision = "APPROVED [SUCCESS]" if "APPROVE" in chairman_text.upper() else "REJECTED [FAIL]"
         
         print("\n" + "="*80)
         print(f"SENTINEL FINAL DECISION: {decision}")
@@ -265,12 +265,12 @@ Well-managed company with institutional controls and proven track record.
         print("TEST RESULT")
         print("="*80)
         if "APPROVE" in chairman_text.upper() and "REJECT" not in chairman_text.upper()[:500]:
-            print("✅ SUCCESS: Infosys was correctly APPROVED!")
+            print("[SUCCESS] SUCCESS: Infosys was correctly APPROVED!")
             print("   - Tier 1 classification worked")
             print("   - No hallucinated rejections")
             print("   - System enforced tier-based approval logic")
         else:
-            print("❌ FAILED: Infosys was rejected despite Tier 1 status")
+            print("[FAIL] FAILED: Infosys was rejected despite Tier 1 status")
             print("   - Review the chairman output below")
         
         print("\n" + "="*80)
@@ -278,12 +278,12 @@ Well-managed company with institutional controls and proven track record.
         print("="*80)
         print(chairman_text)
         
-        print(f"\n✅ Full CAM document saved to: {results.get('cam_doc_path', 'N/A')}")
+        print(f"\n[SUCCESS] Full CAM document saved to: {results.get('cam_doc_path', 'N/A')}")
         
         return "APPROVE" in chairman_text.upper() and "reject" not in chairman_text.lower()[:500]
 
     except Exception as e:
-        print(f"\n❌ ERROR: {str(e)}")
+        print(f"\n[FAIL] ERROR: {str(e)}")
         import traceback
         traceback.print_exc()
         return False

@@ -12,3 +12,5 @@ networkx==3.3
 matplotlib==3.9.0
 requests==2.32.3
 openpyxl==3.1.4
+PyMuPDF==1.27.1
+pytesseract==0.3.13

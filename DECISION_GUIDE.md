@@ -1,4 +1,4 @@
-# SENTINEL Credit Decision Engine - Decision Flow Guide
+ i# SENTINEL Credit Decision Engine - Decision Flow Guide
 
 ## Quick Reference: How SENTINEL Makes Decisions (Fixed Version)
 

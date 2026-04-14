@@ -1,0 +1,65 @@
+## PROFIT & LOSS (in Lakhs)
+- Revenue from Operations: FY25 = 134,711.00 Lakhs | FY24 = 102,397.00 Lakhs
+- Other Income: FY25 = 1,694.38 Lakhs | FY24 = 1,911.83 Lakhs
+- Total Income: FY25 = 150,655.79 Lakhs | FY24 = Not available
+- Finance Cost: FY25 = 70,370.15 Lakhs | FY24 = 4,202.26 Lakhs
+- Depreciation: FY25 = 1,795.81 Lakhs | FY24 = 1,919.21 Lakhs
+- Tax: FY25 = 4,911.53 Lakhs | FY24 = 3,514.13 Lakhs
+- PAT: FY25 = 35,895.45 Lakhs | FY24 = 362.97 Lakhs
+- PBT: FY25 = 29,063.00 Lakhs | FY24 = 25,536.00 Lakhs
+- Cost of Material Consumed: FY25 = Not available | FY24 = Not available
+- Employee Benefit Expense: FY25 = 13,840.72 Lakhs | FY24 = 12,425.01 Lakhs
+- Admin/Selling Expense: FY25 = 8,603.50 Lakhs | FY24 = 6,443.05 Lakhs
+
+## BALANCE SHEET (in Lakhs)
+- Share Capital: FY25 = 1,804.08 Lakhs | FY24 = 1,766.22 Lakhs
+- Reserves and Surplus: FY25 = Not available | FY24 = Not available
+- Long Term Borrowings: FY25 = 0.00 Lakhs | FY24 = 0.00 Lakhs
+- Short Term Borrowings: FY25 = Not available | FY24 = Not available
+- Current Maturities: FY25 = 0.00 Lakhs | FY24 = 76.36 Lakhs
+- Trade Receivables: FY25 = 2,043.97 Lakhs | FY24 = 1,774.62 Lakhs
+- Trade Payables: FY25 = 191.00 Lakhs | FY24 = Not available
+- Inventories: FY25 = Not available | FY24 = Not available
+- Cash and Cash Equivalents: FY25 = 31,807.17 Lakhs | FY24 = 43,290.49 Lakhs
+- Total Current Assets: FY25 = 33,851.14 Lakhs | FY24 = 45,065.11 Lakhs
+- Total Current Liabilities: FY25 = 191.00 Lakhs | FY24 = 0.00 Lakhs
+- CWIP: FY25 = 122.00 Lakhs | FY24 = 161.97 Lakhs
+
+## CASH FLOW STATEMENT (in Lakhs)
+- Operating Cash Flow: FY25 = Not available | FY24 = Not available
+- Investing Cash Flow: FY25 = Not available | FY24 = Not available
+- Financing Cash Flow: FY25 = Not available | FY24 = Not available
+
+## DERIVED METRICS
+- Net Worth: FY25 = 214,691.00 Lakhs | FY24 = 189,392.00 Lakhs  [formula: Share Capital + Reserves]
+- Total Debt: FY25 = 746,954.00 Lakhs | FY24 = 656,860.00 Lakhs  [formula: LT + ST + Maturities]
+- EBITDA: FY25 = 101,228.96 Lakhs | FY24 = 31,657.47 Lakhs  [formula: PBT + Finance Cost + Depreciation]
+- EBITDA%: FY25 = 75.15% | FY24 = 30.92%
+- Debt/Equity: FY25 = 3.48 | FY24 = 3.47
+- ICR: FY25 = 1.41x | FY24 = 7.08x
+- Current Ratio: FY25 = 57.28 | FY24 = 94.21
+- Debtor Days: FY25 = 5.50 days | FY24 = 6.30 days
+- Inventory Days: FY25 = Not available | FY24 = Not available
+
+## AUDITOR
+- Firm: Not mentioned.
+- Qualification: None
+
+## GST DATA
+- Monthly GSTR-1 vs GSTR-3B Variance: Not uploaded
+- Window Dressing Signal: Not uploaded
+- ITC Anomaly: Not uploaded
+
+## BANK DATA
+- Average Monthly Balance: Not uploaded
+- Cheque Bounces: Not uploaded
+- Fund Rotation: Not uploaded
+
+## OTHER / NOTES
+- CWIP: FY25 = 122.00 Lakhs | FY24 = 161.97 Lakhs
+- Proposed Dividend: FY25 = 69.99 Lakhs | FY24 = 69.00 Lakhs
+- MSME Payables: FY25 = 400.00 Lakhs | FY24 = 402.00 Lakhs
+- Customer Advances: FY25 = Not available | FY24 = Not available
+- Unearned Revenue: FY25 = Not available | FY24 = Not available
+- Related Party Transactions: Related party transactions mentioned (% not disclosed)
+- Contingent Liabilities: Not mentioned

@@ -48,15 +48,15 @@ try:
     
     if cam_path and os.path.exists(cam_path):
         file_size = os.path.getsize(cam_path)
-        print(f"\n✅ SUCCESS: CAM document created!")
+        print(f"\n[SUCCESS] SUCCESS: CAM document created!")
         print(f"   Path: {cam_path}")
         print(f"   Size: {file_size} bytes")
-        print(f"\n   The permission error has been FIXED! 🎉")
+        print(f"\n   The permission error has been FIXED! ")
     else:
-        print(f"\n⚠️ File might not exist or path is: {cam_path}")
+        print(f"\n[WARN] File might not exist or path is: {cam_path}")
         
 except Exception as e:
-    print(f"\n❌ ERROR: {str(e)}")
+    print(f"\n[FAIL] ERROR: {str(e)}")
     print("\n   If still seeing 'Permission denied':")
     print("   - Close any open Word documents in output/ folder")
     print("   - Try again in a few seconds")

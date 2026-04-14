@@ -1,0 +1,124 @@
+{
+    "revenue": [
+        134711.0,
+        102397.0
+    ],
+    "other_income": [
+        1684.65,
+        2669.81
+    ],
+    "total_income": [
+        136395.83,
+        105066.69
+    ],
+    "finance_cost": [
+        69926.89,
+        53896.0
+    ],
+    "depreciation": [
+        1674.59,
+        1759.86
+    ],
+    "tax": [
+        177.98,
+        616.02
+    ],
+    "pbt": [
+        29063.0,
+        25536.0
+    ],
+    "pat": [
+        22004.08,
+        19125.95
+    ],
+    "cogs": [],
+    "employee_expense": [
+        10120.55,
+        8915.22
+    ],
+    "admin_expense": [
+        6230.37,
+        4687.61
+    ],
+    "share_capital": [
+        14000.0
+    ],
+    "reserves": [],
+    "lt_borrowings": [
+        0.0,
+        0.0
+    ],
+    "st_borrowings": [],
+    "current_maturities": [
+        0.0,
+        76.36
+    ],
+    "trade_receivables": [
+        370.64,
+        782.53
+    ],
+    "trade_payables": [],
+    "inventories": [],
+    "cash": [
+        988.64,
+        941.51
+    ],
+    "st_loans_advances": [],
+    "other_current_assets": [],
+    "total_ca": [
+        1359.28,
+        1724.04
+    ],
+    "other_current_liabilities": [],
+    "st_provisions": [],
+    "total_cl": [],
+    "operating_cash_flow": [],
+    "investing_cash_flow": [],
+    "financing_cash_flow": [],
+    "cwip": [],
+    "proposed_dividend": [
+        69.99,
+        202.0
+    ],
+    "msme_payables": [
+        400.0,
+        402.0
+    ],
+    "customer_advances": [],
+    "unearned_revenue": [],
+    "cfo": [],
+    "cfi": [
+        -14540.76,
+        -0.2565386
+    ],
+    "cff": [],
+    "auditor": "Sundaram & Srinivasan",
+    "related_party": "Related party transactions mentioned (% not disclosed)",
+    "net_worth": [
+        214691.0,
+        189392.0
+    ],
+    "total_debt": [
+        746954.0,
+        656860.0
+    ],
+    "ebitda": [
+        100664.48,
+        81191.86
+    ],
+    "ebitda_pct": [
+        74.73,
+        79.29
+    ],
+    "debt_equity": [
+        3.479,
+        3.468
+    ],
+    "icr": [
+        1.42,
+        1.47
+    ],
+    "current_ratio": [],
+    "debtor_days": [],
+    "inventory_days": []
+}

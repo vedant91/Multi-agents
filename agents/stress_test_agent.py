@@ -2,7 +2,7 @@
 # AGENT 6 — What breaks this company? Runs 4 scenario simulations
 
 import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.llm_client import call_llm
 
@@ -42,7 +42,7 @@ EXAMPLE — CORRECT DSCR calculation:
   DSCR = Rs.11,494 ÷ Rs.2,755 = 4.17x
 
 COMMON MISTAKE TO AVOID:
-  ❌ WRONG: Existing Debt Service = Finance Costs (2,640) + (Total Debt / 5 years)
+  [FAIL] WRONG: Existing Debt Service = Finance Costs (2,640) + (Total Debt / 5 years)
   This double-counts — Finance Costs already includes interest paid on existing debt.
   Only add principal repayment if you have actual maturity schedule data.
 
@@ -97,7 +97,7 @@ SURVIVAL RATINGS
 🟢 RESILIENT: Survives all 4 scenarios with DSCR above 1.25x in all
 🟡 ADEQUATE: Survives 1-3, scenario 4 DSCR drops to 1.0-1.25x range
 🟠 FRAGILE: Fails 2 of 4 (DSCR drops below 1.0x in 2 scenarios)
-🔴 VULNERABLE: Fails 3 or more → Recommend loan amount reduction to 60%
+ VULNERABLE: Fails 3 or more → Recommend loan amount reduction to 60%
 
 COVENANT LOGIC:
 If Scenario 1 fails → Covenant: "Submit top-10 customer revenue quarterly.
@@ -169,7 +169,7 @@ RESULTS SUMMARY TABLE:
 │ 4. Combined Stress    │ Both above       │  ___x    │  ___x │ [RESULT]  │
 └─────────────────────────────────────────────────────────────────────────┘
 
-SENTINEL SURVIVAL RATING: 🟢/🟡/🟠/🔴 [RATING NAME]
+SENTINEL SURVIVAL RATING: 🟢/🟡/🟠/ [RATING NAME]
 
 COVENANTS TRIGGERED BY THIS STRESS TEST:
 1. [Covenant tied to scenario result — or NONE if all scenarios pass]
@@ -200,7 +200,13 @@ def run_stress_test(parser_output: str, chairman_output: str,
     """
     print("Running Stress Test Agent...")
 
-    loan_amount = loan_details.get('loan_amount', 'N/A')
+    raw_loan_amount = loan_details.get('loan_amount', 0)
+    try:
+        # Convert user input (usually in raw ₹) to Lakhs to match parser output
+        loan_amount_lakhs = float(str(raw_loan_amount).replace(',', '')) / 100000.0
+    except ValueError:
+        loan_amount_lakhs = raw_loan_amount
+
     sector      = loan_details.get('sector', 'N/A')
     company     = loan_details.get('company_name', 'N/A')
 
@@ -208,18 +214,20 @@ def run_stress_test(parser_output: str, chairman_output: str,
 Run all 4 stress scenarios for this company. Show your full math step by step.
 
 Company:     {company}
-Loan Amount: Rs.{loan_amount}
+Loan Amount: {loan_amount_lakhs:.2f} Lakhs (CRITICAL: Value is in Lakhs, treat it as such for all DSCR math)
 Sector:      {sector}
 
 MANDATORY BEFORE STARTING:
 1. Extract CFO, EBITDA, Finance Costs, Total Debt, Net Worth, Cash Balance
-   from the financial data below.
+   from the financial data below. (Note: These are usually in Lakhs or Crores).
 2. Calculate TOTAL ANNUAL DEBT SERVICE using this formula:
    a. New Loan Annual Service = (Loan Amount / Tenure_years) + (Loan Amount × Interest Rate)
    b. Existing Debt Service = Declared Finance Costs from P&L (this represents annual interest)
       DO NOT add principal repayment unless you have confirmed maturity schedule data.
    c. Total Debt Service = a + b
 3. BASE CASE DSCR = CFO / Total Debt Service (calculated above)
+   CRITICAL MATH RULE: Ensure the numerator (CFO) and denominator (Debt Service) are in the EXACT SAME UNITS (e.g., both Lakhs, or both Crores).
+   If CFO is in Lakhs, use the 100,000-divided Loan Amount.
 4. DO NOT use Loan Amount alone as the denominator for DSCR.
 
 If customer concentration data is not available in the documents,

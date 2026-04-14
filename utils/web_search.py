@@ -33,7 +33,7 @@ def search_web(query: str, max_results: int = 5, timeout_seconds: int = 30) -> s
         )
         
         elapsed = time.time() - start_time
-        print(f"    ✓ Search completed in {elapsed:.1f}s")
+        print(f"     Search completed in {elapsed:.1f}s")
 
         formatted = f"SEARCH QUERY: {query}\n"
         formatted += "=" * 50 + "\n"
@@ -54,7 +54,7 @@ def search_web(query: str, max_results: int = 5, timeout_seconds: int = 30) -> s
 
     except (TimeoutError, ConnectionError, OSError) as e:
         # Network timeout - return neutral message instead of error
-        print(f"    ⚠️  Search timeout for: {query} | Proceeding with neutral assumptions")
+        print(f"    [WARN]  Search timeout for: {query} | Proceeding with neutral assumptions")
         return f"""SEARCH QUERY: {query}
 [TIMEOUT - API slow, proceeding with neutral assumptions]
 
@@ -65,7 +65,7 @@ No confirmed issues detected in available sources at time of query.
         error_msg = str(e).lower()
         # Rate limit error - be lenient
         if "rate" in error_msg or "quota" in error_msg:
-            print(f"    ℹ️  Search rate limit: {query} | Using neutral fallback")
+            print(f"    [INFO]  Search rate limit: {query} | Using neutral fallback")
             return f"""SEARCH QUERY: {query}
 [API RATE LIMIT - Proceeding with neutral assumptions]
 
@@ -104,7 +104,7 @@ def run_all_research_searches(company_name: str, promoter_name: str, sector: str
     ]
 
     for query in searches:
-        print(f"  🔍 Searching: {query}")
+        print(f"  [SEARCH] Searching: {query}")
         result = search_web(query, max_results=3)
         all_results += result + "\n\n"
 

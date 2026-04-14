@@ -22,7 +22,7 @@ HALLUCINATION RISK: LOW / MEDIUM / HIGH
 """
 
 def run_fact_checker(research_output: str, raw_search_results: str) -> str:
-    print("🔍 Running Fact Checker...")
+    print("[SEARCH] Running Fact Checker...")
     result = call_llm("fact_checker", SYSTEM_PROMPT, f"""
     RESEARCH OUTPUT TO CHECK:
     {research_output[:6000]}

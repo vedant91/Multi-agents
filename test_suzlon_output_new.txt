@@ -1,0 +1,98 @@
+﻿
+Extracting: 2_CONDITIONAL_Suzlon.pdf
+  [PDF] 2_CONDITIONAL_Suzlon.pdf: 6 pages
+  [PDF] 2_CONDITIONAL_Suzlon.pdf: 10,278 chars (0 OCR pages, 6 digital pages)
+ Running Document Parser Agent (Python extractor mode)...
+  [DOC] 2_CONDITIONAL_Suzlon.pdf -> role: other (10,280 chars)
+  [DOC] Running Python regex extractor...
+  [DOC] LLM call for auditor/notes info...
+  [TIME]  doc_parser_notes LLM call: 0.9s
+  [DOC] Regex missed >3 key fields. Triggering FULL LLM Extraction fallback...
+  [TIME]  doc_parser_fallback LLM call: 1.2s
+Running Fraud Detection Agent...
+  [TIME]  fraud_detector LLM call: 1.0s
+Fraud Detection Complete
+Running Bull Agent (Case for Approval)...
+  [TIME]  bull LLM call: 0.9s
+Bull Agent Complete
+Running Bear Agent (Case for Rejection)...
+  [TIME]  bear LLM call: 1.0s
+Bear Agent Complete
+Weighing Chairman Decision...
+  [TIME]  chairman LLM call: 1.2s
+Chairman Decision Complete
+
+
+=== CHAIRMAN OUTPUT ===
+=== CHAIRMAN'S VERDICT ===
+
+TRIGGER VALIDATION RESULTS:
+1. **High Inventory Days**: DISREGARDED (Rule F, Bear's speculative concern)
+2. **Low Current Ratio**: DISREGARDED (Rule F, Bear's speculative concern)
+3. **High Short-Term Borrowings**: CONFIRMED (Rule C, Official source required)
+4. **High Current Ratio**: DISREGARDED (Rule F, Bear's speculative concern)
+5. **Lack of information on Share Capital, Proposed Dividend, MSME Payables, Customer Advances, Unearned Revenue, and Related Party Transactions**: DISREGARDED (Rule A, Uncited finding)
+6. **Insufficient data to assess the effectiveness of the company's working capital management**: DISREGARDED (Rule B, Low confidence level)
+
+FRAUD DETECTOR VALIDATION:
+No fraud flags were disregarded per Rule G. The total fraud penalty being applied is 0 points.
+
+THE DEBATE SCORECARD:
+Bull's strongest point: **Consistent Revenue Growth** | Strength: STRONG
+Bear's strongest point: **Inadequate Cash Flow Generation** | Strength: STRONG
+Chairman's ruling on key dispute: The Bear's concerns about cash flow generation and debt-to-equity ratio are valid, but the Bull's points about consistent revenue growth and strong EBITDA margin are also significant. However, the Bear's points are more critical to the company's financial health. Therefore, the Bear's strongest point wins.
+
+SENTINEL CREDIT SCORECARD:
+
+Pillar 1 - Financial Health:
+  Revenue Growth: 6/8   [CAGR 10.42%, bracket selected]
+  EBITDA Margin:   7/7   [21.8% vs sector avg, bracket selected]
+  Debt/Equity:     2/7   [0.23x, bracket selected]
+  ICR:             5/7   [13.7x, bracket selected]
+  CFO Quality:     4/6   [CFO/PAT 1.4x, bracket selected]
+  Pillar 1 Total:  24/35
+
+Pillar 2 - Fraud and Integrity:
+  Revenue Triangulation: 6/10  [gap 3.5%, bracket selected]
+  Auditor Opinion:       7/7   [Clean opinion]
+  Related Party:         3/5   [0% of revenue, bracket selected]
+  Fraud Penalties:       0/5   [validated fraud deductions]
+  Pillar 2 Total:        17/25
+
+Pillar 3 - External Intelligence:
+  Legal/Regulatory:      5/8   [status after validation]
+  Promoter Track Record: 4/7   [assessment]
+  Sector Health:         3/5   [assessment]
+  Pillar 3 Total:        12/20
+
+Pillar 4 - Management and Ops:
+  Site Visit/Factory:    0/5   [no data]
+  Management Quality:    2/3   [assessment]
+  Governance:            1/2   [board structure]
+  Pillar 4 Total:        3/10
+
+Pillar 5 - Collateral and Repayment:
+  Collateral Coverage:   0/4   [no data]
+  Repayment History:     2/4   [0 DPD / delays]
+  DSCR:                  0/2   [no data]
+  Pillar 5 Total:        2/10
+
+PILLAR SUBTOTAL:    54/100
+TIER BONUS (Tier 3): +0
+SENTINEL SCORE:     54/100 (capped at 100)
+
+FINAL DECISION: CONDITIONAL APPROVE
+Loan Amount: Rs.400,000,000 (vs requested Rs.500,000,000)
+Interest Rate: 10.0% p.a. (Repo 6.5% + 3.5% risk premium)
+Tenure: 36 months
+Security: Primary: 70% | Collateral: 30%
+
+CONDITIONS / COVENANTS:
+1. Maintain a minimum Current Ratio of 1.2x.
+2. Maintain a minimum Interest Coverage Ratio of 12x.
+3. Provide regular updates on working capital management and debt repayment schedule.
+
+REJECTION RATIONALE (only if rejected ΓÇö must cite validated data):
+Primary Reason: Inadequate Cash Flow Generation and High Debt-to-Equity Ratio.
+Supporting Reason 1: Operating Cash Flow = 1,084 Crores, which is only 10.2% of Total Income = 10,644 Crores.
+Supporting Reason 2: Total Debt = 1,048 Crores, Net

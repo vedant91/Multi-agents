@@ -61,8 +61,8 @@ Experienced management team in place.
             intel = results['company_intelligence']
             company_tier = intel.get('tier', 'UNKNOWN')
             bonus_points = intel.get('credibility_bonus', 0)
-            print(f"✓ Company Tier Detected: {company_tier}")
-            print(f"✓ Credibility Bonus Applied: +{bonus_points} points\n")
+            print(f" Company Tier Detected: {company_tier}")
+            print(f" Credibility Bonus Applied: +{bonus_points} points\n")
 
         # Check decision
         chairman_upper = chairman_text.upper()
@@ -70,14 +70,14 @@ Experienced management team in place.
 
         print("DECISION:")
         if is_approved:
-            print("✓ APPROVED (Correct!)")
+            print(" APPROVED (Correct!)")
             print("\nFIX VERIFICATION: SUCCESS")
             print("  - Infosys correctly classified as TIER 1")
             print("  - Speculative concerns were disregarded")
             print("  - System applied credibility bonus")
             print("  - Loan approved for established company")
         else:
-            print("✗ REJECTED (System may still have issues)")
+            print(" REJECTED (System may still have issues)")
             print("\nDEBUGGING INFO:")
             print("  - Check if Company Intelligence agent is loaded")
             print("  - Verify research agent is filtering properly")
@@ -95,7 +95,7 @@ Experienced management team in place.
         return is_approved
 
     except Exception as e:
-        print(f"\n✗ ERROR during test: {str(e)}")
+        print(f"\n ERROR during test: {str(e)}")
         import traceback
         traceback.print_exc()
         return False

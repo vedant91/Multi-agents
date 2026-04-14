@@ -1,0 +1,320 @@
+======================================================================
+FULL EXTRACTION TEST — ALL 5 PDFs
+======================================================================
+
+======================================================================
+PDF: Balance Sheet.pdf
+======================================================================
+Chars extracted: 48,652
+
+Financial terms found:
+  [OK] 'Profit': ...Net profit (Loss) before taxation...
+  [OK] 'PAT': ...heim pate :29.07.2025 UBIN: 2503547 1BMOJT06014...
+  [OK] 'Depreciation': ...for: Depreciation & Amortisation...
+  [OK] 'Share capital': ...(a) Share capital                                                1...
+  [OK] 'Reserves': ...(b) Reserves and surplus                                                     2...
+  [OK] 'Borrowings': ...term borrowings                                  3                     -...
+  [OK] 'Current Assets': ...NON-CURRENT ASSETS (a) Property, Plant & Equipment & Intangible Assets () Property p...
+  [OK] 'Current Liabilities': ...NON CURRENT LIABILITIES (a) Long term borrowings                                  3...
+  [OK] 'Trade Receiv': ...(b) Trade receivables...
+  [OK] 'Cash flow': ...1. _ Cash flow from operating activities: Net profit (Loss) before taxation...
+  [OK] 'In Lakhs': ...OUNT In Lakhs               %ln Lakhs 1, EQUITY AND LIABILITIES (1)       SHAREHOLDER...
+  [OK] 'in Lakhs': ...OUNT In Lakhs               %ln Lakhs 1, EQUITY AND LIABILITIES (1)       SHAREHOLDER...
+  [OK] 'Lakhs': ...T In Lakhs               %ln Lakhs 1, EQUITY AND LIABILITIES (1)       SHAREHOLDER'S...
+  [OK] '31.03.2025': ...31.03.2025              31.03.2024 No.                                PARTICULAR...
+  [OK] '31.03.2024': ...31.03.2024 No.                                PARTICULARS...
+
+First 1500 chars of extracted text:
+----------------------------------------
+
+  --- PAGE 1 [OCR] ---
+  WOHR PARKING SYSTEMS PRIVATE LIMITED.
+  1206/41A, VYAS               J.M. ROAD, SHIVAJINAGAR, PUNE - 411 004.
+  BALANCE SHEET AS AT 31ST MARCH, 2025,
+  AS ON                      AS ON
+  SR.                                                                                      NOTE          31.03.2025              31.03.2024
+  No.                                PARTICULARS                                 No.              AMOUNT                  AMOUNT
+  In Lakhs               %ln Lakhs
+  1, EQUITY AND LIABILITIES
+  (1)       SHAREHOLDER'S FUNDS
+  (a) Share capital                                                1                    498.01                 498.01
+  (b) Reserves and surplus                                                     2                         6956.66                     4671.02
+  (2) NON CURRENT LIABILITIES
+  (a) Long term borrowings                                  3                     -                     -
+  (b) Other Long term liabilities                                            5                         1941.78                    2046.36
+  (3) CURRENT LIABILITIES
+  (a) Short term borrowings                                                 6                          424.01                      670.95
+  (b) Current maturities of long term borrowings                   6                              -                            76.36
+  () Trade payables                                                                     7                            5121.95         
+
+======================================================================
+PDF: Profit & Loss.pdf
+======================================================================
+Chars extracted: 77,958
+
+Financial terms found:
+  [OK] 'Revenue from operations': ...s I. Revenue from operations                                      18...
+  [OK] 'Total Income': ...2 i. TOTAL INCOME (I+Il)...
+  [OK] 'Profit': ...004. PROFIT AND LOSS FOR THE YEAR ENDED 318T MARCH, 2025. FORTHE YEAR FOR THE YEAR EN...
+  [OK] 'Finance cost': ...4 () Finance cost                                                             26...
+  [OK] 'Depreciation': ...(g) Depreciation and amortization expense                     10...
+  [OK] 'Reserves': ...ty + reserves)                                                                   0.06...
+  [OK] 'Borrowings': ...has borrowings from banks on the basis of security of current assets. The quarterly...
+  [OK] 'Current Assets': ...tio (current assets / current liabilities)...
+  [OK] 'Current Liabilities': ...ts / current liabilities)                                                         0.0...
+  [OK] 'Trade Receiv': ...8 2. Trade receivables Amount receivable in Euro...
+  [OK] 'Inventory': ...5 _ Inventory Turnover Ratio (Inventory / tumover x days)...
+  [OK] 'In Lakhs': ...UNT Zin Lakhs                Zn Lakhs I. Revenue from operations...
+  [OK] 'in Lakhs': ...UNT Zin Lakhs                Zn Lakhs I. Revenue from operations...
+  [OK] 'Lakhs': ...Zin Lakhs                Zn Lakhs I. Revenue from operations...
+  [OK] '31.03.2025': ...31.03.2025      31.03.2024 ....
+  [OK] '31.03.2024': ...31.03.2024 ....
+
+First 1500 chars of extracted text:
+----------------------------------------
+
+  --- PAGE 1 [OCR] ---
+  WOHR P.          |G SYSTEMS PRIVATE LIMITED.
+  1206/41A, VYAS VE!          ‘J.M. ROAD, SHIVAJINAGAR, PUNE - 411 004.
+  PROFIT AND LOSS FOR THE YEAR ENDED 318T MARCH, 2025.
+  FORTHE YEAR FOR THE YEAR
+  ENDED                     ENDED
+  se              PARTICULARS              aioe     31.03.2025      31.03.2024
+  .                                                                                            .              AMOUNT                   AMOUNT
+  Zin Lakhs                Zn Lakhs
+  I. Revenue from operations                                      18                 38010.51               29121.94
+  1. Other Income                                                                19                         421.91                      432.62
+  i. TOTAL INCOME (I+Il)                                                                            38482.42                  29554.57
+  Iv. _ Expenses:
+  (a) Cost of material consumed                                       20 & 21                   26346.07                    20607.38
+  (b) Changes in inventories of finished goods,                    22                       (145.38)                     (33.06)
+  work-in-progress and stock in trade.
+  (©) Manufacturing expenses                             23                3376.40              2665.67
+  (d) Employee benefit expense                              24                 2748.37              2179.10
+  (e) Administrative & selling expense                                25                        
+
+======================================================================
+PDF: Wohr_Balance Sheet_2025.pdf
+======================================================================
+Chars extracted: 160,806
+
+Financial terms found:
+  [OK] 'Revenue from operations': ...I. Revenue from operations 18 3,801,050,835         2,912,194,441         II. Other...
+  [OK] 'Total Income': ...ROSS TOTAL INCOME 400,108,811 Less : DEDUCTION UNDER CHAPTER VI-A - DONATION 80G AAZT...
+  [OK] 'Profit': ...3    Profit & Loss Account  34    Notes to the Financial Statement 35  to  38 Depreci...
+  [OK] 'PAT': ...R Belpatre 22,500 57. Milan Surface Coating-MICRO 8,721,117 58. MEENAKSHI METAL FORMS...
+  [OK] 'Finance cost': ...(f) Finance cost 26 11,558,175              7,541,832                (g) Depreciatio...
+  [OK] 'Depreciation': ...38 Depreciation 39    Notes to the Financial Statement 40  to  53 Notes to Accounts...
+  [OK] 'Share capital': ...(a) Share capital 1 49,801,000             49,801,000             (b) Reserves and s...
+  [OK] 'Reserves': ...(b) Reserves and surplus 2 695,665,523           467,102,463           (2) NON CURRE...
+  [OK] 'Borrowings': ...term borrowings 6 42,401,002             67,094,534             (b) Current maturitie...
+  [OK] 'Current Assets': ...NON-CURRENT ASSETS (a) Property, Plant & Equipment & Intangible Assets (i) Property...
+  [OK] 'Current Liabilities': ...NON CURRENT LIABILITIES (a) 3 -                         -                         (b...
+  [OK] 'Trade Receiv': ...(b) Trade receivables 14 706,154,799           425,774,537           (c) Cash and ca...
+  [OK] 'Inventory': ...9% 5 Inventory Turnover Ratio (Inventory / turnover x days)                     44.10...
+  [OK] 'Cash flow': ...2    Cash Flow Statement 33    Profit & Loss Account  34    Notes to the Financial St...
+  [OK] '31.03.2025': ...ON   31.03.2025   31.03.2024   AMOUNT   AMOUNT  `  `  I. EQUITY AND LIABILITIES (1) S...
+  [OK] '31.03.2024': ...25   31.03.2024   AMOUNT   AMOUNT  `  `  I. EQUITY AND LIABILITIES (1) SHAREHOLDER'S...
+
+First 1500 chars of extracted text:
+----------------------------------------
+
+  --- PAGE 1 ---
+  Reference
+  Page No.
+  Notice
+  1, 1a,
+  Director Report
+  2  to  9
+  Directors' Report_Annexure
+  10  to  16
+  Auditor's Report
+  17  to  22
+  Annexure to Auditor's Report
+  23  to  31
+  Balance Sheet
+  32   
+  Cash Flow Statement
+  33   
+  Profit & Loss Account 
+  34   
+  Notes to the Financial Statement
+  35  to  38
+  Depreciation
+  39   
+  Notes to the Financial Statement
+  40  to  53
+  Notes to Accounts
+  54  to  59
+  Sundry Creditors ( Raw Material & Expenses & Capital )
+  60  to  65
+  List of Creditors ( Advance to Expenses, Advance to Supplier , 
+  Advance to Import Supplier & Advance to Capital, Advance to Staff
+  66  to  68
+  List of Fixed Deposit
+  69  to  69
+  List of Sundry Debtors 
+  70  to  80
+  List of Logn term Advance
+  81  to  82
+  List of Advance received from Customers 
+  83  to  88
+  List of Shareholder
+  89   
+  I N D E X
+  Wohr Parking systems Pvt Ltd.,
+  
+  --- PAGE 2 ---
+  ASSESSMENT YEAR
+  :
+  2025 - 2026
+  NAME OF THE ASSESSEE
+  :
+  WOHR PARKING SYSTEMS PVT. LTD.
+  STATUS
+  :
+  COMPANY
+  ADDRESS
+  :
+  1206/41A, VYAS VERTEX,
+  J. M. ROAD, SHIVAJINAGAR, 
+  PUNE - 411 004
+  DATE OF INCORPORATION
+  :
+  05.10.2005
+  PREVIOUS YEAR ENDING ON
+  :
+  31ST MARCH, 2025.
+  PERMANENT ACCOUNT NUMBER
+  :
+  AAACW6100A/WARD 1(4), PUNE
+  `
+  `
+  1. INCOME FROM BUSINESS
+  Net Profit / [Loss] as per Profit & Loss Account
+  330,760,978
+  Add :
+  Depreciation considered separately
+  24,855,318
+  Expenditure on Capital Goods
+  783,038
+  Disallowance U/s. 37(1)
+   - Loss on Sale of Asset
+  683,889
+  - Corporate Social Responsibility
+  2,525,000
+  - Interest on TDS & Income Tax & GST
+  1,463,981
+   - Donation
+  55,500
+   - Bad D
+
+======================================================================
+PDF: 8_IFCR Report Auditors Report_2025.pdf
+======================================================================
+Chars extracted: 6,455
+
+Financial terms found:
+  [WARN] No financial keywords found — possible OCR quality issue
+
+First 1500 chars of extracted text:
+----------------------------------------
+
+  --- PAGE 1 ---
+  V. S. POTDAR & CO. 
+  CHARTERED ACCOUNTANTS 
+   
+   
+  C-9, Beverly Estate,852/5 & 6, Bhandarkar Institute Road, Pune 411 004. 
+  Tel.:(020) 25678400 / 403 / 404 / 405.  E-mail: office@vspaco.in 
+  …29… 
+   
+   
+   
+  ANNEXURE TO THE INDEPENDENT AUDITOR’S REPORT OF EVEN DATE ON THE 
+  STANDALONE FINANCIAL STATEMENTS OF WOHR PARKING SYSTEM PRIVATE 
+  LIMITED 
+   
+   
+  To, 
+  The Members, 
+  WOHR PARKING SYSTEM PRIVATE LIMITED 
+  PUNE. 
+   
+  1. 
+  REPORT ON THE INTERNAL FINANCIAL CONTROLS UNDER CLAUSE (I) OF SUB 
+  SECTION 3 OF SECTION 143 OF THE COMPANIES ACT, 2013 
+  We have audited the Internal Financial Controls over financial reporting of WOHR 
+  PARKING SYSTEM PRIVATE LIMITED as on 31st March, 2025 in conjunction with 
+  our audit of the standalone financial statements of the Company for the year ended 
+  on that date. 
+   
+  2. 
+  MANAGEMENT’S RESPONSIBILITY FOR INTERNAL FINANCIAL CONTROLS 
+  The Company’s Board of Directors is responsible for establishing and maintaining 
+  internal financial controls based on, “the internal control over financial reporting 
+  criteria established by the Company considering the essential components of internal 
+  control stated in the Guidance Note on Audit of Internal Financial Controls over 
+  Financial Reporting issued by the Institute of Chartered Accountants of India”. These 
+  responsibilities include the design, implementation and maintenance of adequate 
+  internal financial controls that were operating effectively for ensuring the orderly and 
+  efficient conduct of its business, 
+
+======================================================================
+PDF: 10_Notes to Accounts Final_2025.pdf
+======================================================================
+Chars extracted: 12,378
+
+Financial terms found:
+  [OK] 'Depreciation': ...NT & DEPRECIATION  Tangible & Intangible assets are stated at Cost less Accumulated D...
+  [OK] 'Borrowings': ...has borrowings from banks on the basis of security of current assets. The  quarterly...
+  [OK] 'Current Assets': ...d.  CURRENT ASSETS    i)  VALUATION OF INVENTORIES     The company valued its invent...
+  [OK] 'Current Liabilities': ...tary Current Liabilities  denominated in foreign currency are translated at the excha...
+  [OK] 'Inventory': ...its inventory of raw material at cost or net realizable value,  whichever is lower o...
+
+First 1500 chars of extracted text:
+----------------------------------------
+
+  --- PAGE 1 ---
+  …54… 
+   
+  NOTE NO 36 : NOTES FORMING PART OF ACCOUNTS 
+   
+   
+  SIGNIFICANT ACCOUNTING POLICIES 
+   
+   
+   
+  a. 
+  GENERAL 
+  The accounts of the Company are prepared under the Historical Cost Convention in 
+  accordance with the generally accepted accounting principles in India and the provisions of 
+  The Companies Act, 2013. 
+   
+  b. 
+  PROPERTY, PLANT & EQUIPMENT & DEPRECIATION 
+  Tangible & Intangible assets are stated at Cost less Accumulated Depreciation. Cost includes 
+  all expenses, incidental and ancillary to acquire assets, including import duties and other 
+  non-refundable taxes or levies including borrowing costs attributable to acquisition, 
+  construction or production of an asset upto the date the asset is ready for its intended use. 
+  Preoperative expenses upto the date of commencement of commercial activities are also 
+  capitalized as a part of cost of assets. Depreciation on assets is calculated on Written Down 
+  Value Method on useful life specified in Schedule II of the Companies Act, 2013 for the full 
+  year, except for assets acquired or disposed off during the year. As per Schedule II of 
+  Companies Act, 2013, Depreciation on Intangible Assets is calculated as per Accounting 
+  Standard 26. 
+   
+   
+  c. 
+  INVESTMENTS 
+  The Company has invested in Shares of The Cosmos Co-op Bank Ltd. The investment in long 
+  term in nature and is stated at Cost of Acquisition. Provision for dimunition in the value of 
+  investment will be made if such dimunition is other than temporary 
+   
+   
+  d. 
+  CURRENT
+
+======================================================================
+TEST COMPLETE
+======================================================================

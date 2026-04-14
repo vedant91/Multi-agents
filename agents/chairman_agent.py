@@ -2,7 +2,7 @@
 # AGENT 5 — Hears the debate, makes the final credit decision
 
 import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.llm_client import call_llm
 
@@ -15,7 +15,7 @@ Your job: Weigh evidence like a judge. Determine which argument is better
 supported by actual data. Do NOT simply average the two positions.
 
 ══════════════════════════════════════════════════════════════
-⚠️  CRITICAL SCORING INSTRUCTION — READ FIRST ⚠️
+[WARN]  CRITICAL SCORING INSTRUCTION — READ FIRST [WARN]
 ══════════════════════════════════════════════════════════════
 
 YOU MUST COMPLETE ALL 5 PILLARS OF SCORING (0-100 points total).
@@ -46,10 +46,10 @@ Before doing ANY validation, check the Company Intelligence analysis:
            Credibility adjustment: -5
 
 For TIER 1 companies specifically:
-  ✓ Big 4 audit = professionally reviewed financials
-  ✓ Bear "POSSIBLE" concerns → downgrade to Watch Items, not rejection reasons
-  ✓ Research allegations without official sources → disregard entirely
-  ✓ Default path is APPROVAL unless confirmed critical evidence exists
+   Big 4 audit = professionally reviewed financials
+   Bear "POSSIBLE" concerns → downgrade to Watch Items, not rejection reasons
+   Research allegations without official sources → disregard entirely
+   Default path is APPROVAL unless confirmed critical evidence exists
 
 ══════════════════════════════════════════════════════════════
 STEP 1 — VALIDATE AUTOMATIC REJECTION TRIGGERS FIRST
@@ -83,20 +83,20 @@ VALIDATION RULE D — REALITY CHECK:
 
 VALIDATION RULE E — ALLEGATIONS VS CONFIRMED:
   These are NOT automatic rejection triggers:
-    ✗ GST demand notice (that is a dispute, not confirmed fraud)
-    ✗ SEBI fine or settlement (NOT the same as debarment)
-    ✗ "Under investigation" without charge sheet
-    ✗ Allegations in news articles without official order
-    ✗ Resolved / settled matters older than 5 years
+     GST demand notice (that is a dispute, not confirmed fraud)
+     SEBI fine or settlement (NOT the same as debarment)
+     "Under investigation" without charge sheet
+     Allegations in news articles without official order
+     Resolved / settled matters older than 5 years
   Move these to CONDITIONAL covenants, not rejection.
 
 VALIDATION RULE F — BEAR AGENT SPECULATIVE CONCERNS:
   The Bear agent may present "POSSIBLE" concerns or hypotheticals.
   For Tier 1 companies (Big 4 auditors, listed), these are NOT rejection reasons:
-    ✗ "Possible hidden debt" without citing actual hidden borrowings
-    ✗ "Could be window dressing" without actual threshold breach detected
-    ✗ "What if top customer leaves" without customer concentration data
-    ✗ "Might be related party activity" without actual TP pricing issues
+     "Possible hidden debt" without citing actual hidden borrowings
+     "Could be window dressing" without actual threshold breach detected
+     "What if top customer leaves" without customer concentration data
+     "Might be related party activity" without actual TP pricing issues
   For Tier 1, Bears must cite actual evidence OR the concern becomes a Watch Item.
 
 VALIDATION RULE G — FRAUD DETECTOR SCORE REALITY CHECK:
@@ -106,14 +106,14 @@ VALIDATION RULE G — FRAUD DETECTOR SCORE REALITY CHECK:
   If total fraud penalty is -12 or less: treat as clean, no material fraud concern.
 
 CONFIRMED AUTOMATIC REJECTION TRIGGERS (only if officially verified):
-  ✗ Promoter confirmed on RBI Wilful Defaulter List (rbi.org.in source)
-  ✗ Active NCLT CIRP order with order number (nclt.gov.in source)
-  ✗ SEBI DEBARMENT order — not a fine, actual debarment (sebi.gov.in)
-  ✗ ED / CBI / SFIO with filed charge sheet (not just initiated inquiry)
-  ✗ GST registration CANCELLED for fraud (not just demand notice)
-  ✗ NPA declared in writing by scheduled commercial bank (last 3 years)
-  ✗ Auditor issued ADVERSE or DISCLAIMER opinion (not just qualified)
-  ✗ Confirmed misrepresentation of financials in this application
+   Promoter confirmed on RBI Wilful Defaulter List (rbi.org.in source)
+   Active NCLT CIRP order with order number (nclt.gov.in source)
+   SEBI DEBARMENT order — not a fine, actual debarment (sebi.gov.in)
+   ED / CBI / SFIO with filed charge sheet (not just initiated inquiry)
+   GST registration CANCELLED for fraud (not just demand notice)
+   NPA declared in writing by scheduled commercial bank (last 3 years)
+   Auditor issued ADVERSE or DISCLAIMER opinion (not just qualified)
+   Confirmed misrepresentation of financials in this application
 
 ══════════════════════════════════════════════════════════════
 STEP 2 — SCORE THE DEBATE
@@ -310,13 +310,13 @@ Purpose: {loan_details.get('loan_purpose', 'N/A')}
 Sector: {loan_details.get('sector', 'N/A')}
 
 COMPANY TIER ANALYSIS:
-{company_intel_text[:15000]}
+{company_intel_text[:3000]}
 Tier Classification: {tier}
 Credibility Bonus: +{credibility_bonus} points — ADD THIS AFTER COMPLETING ALL 5 PILLARS
 
 ════════════════════════════════════════════════════════════
 
-⚠️  MANDATORY SCORING SEQUENCE — DO NOT SKIP ⚠️
+[WARN]  MANDATORY SCORING SEQUENCE — DO NOT SKIP [WARN]
 
 STEP 1 — Validate all triggers using Rules A through G in the system prompt.
           List each flagged trigger and whether it is CONFIRMED or DISREGARDED.
@@ -338,22 +338,22 @@ STEP 6 — Map the SENTINEL SCORE to the decision band:
           40-54 = HIGH RISK REFER | Below 40 = REJECT
 
 PRIMARY DUE DILIGENCE (Credit Officer Notes — highest weight):
-{primary_notes if primary_notes else "No site visit or interview notes provided."}
+{primary_notes[:2500] if primary_notes else "No site visit or interview notes provided."}
 
 BULL AGENT BRIEF:
-{bull_brief[:5000]}
+{str(bull_brief)[:2500]}
 
 BEAR AGENT BRIEF:
-{bear_brief[:5000]}
+{str(bear_brief)[:2500]}
 
 FRAUD DETECTION REPORT:
-{fraud_output[:5000]}
+{str(fraud_output)[:2500]}
 
 DOCUMENT ANALYSIS SUMMARY:
-{parser_output[:5000]}
+{str(parser_output)[:3000]}
 """
 
-    result = call_llm("chairman", SYSTEM_PROMPT, user_message)
+    result = call_llm("chairman", SYSTEM_PROMPT, user_message, max_completion_tokens=1000)
 
     # ════════════════════════════════════════════════════════════
     # POST-PROCESSING: TIER 1 GUARDRAIL
@@ -390,9 +390,10 @@ Then add the +{credibility_bonus} tier bonus.
 Convert speculative rejection reasons to covenants instead.
 
 PREVIOUS ANALYSIS TO RE-EVALUATE:
-{result[:15000]}
+{result[:6000]}
 """
-            result = call_llm("chairman", SYSTEM_PROMPT, re_eval_message)
+            result = call_llm("chairman", SYSTEM_PROMPT, re_eval_message, max_completion_tokens=1000)
 
     print("Chairman Decision Complete")
     return result
+

@@ -1,0 +1,318 @@
+============================================================
+STEP 1: PDF EXTRACTION
+============================================================
+
+Total chars extracted: 307,068
+  Balance Sheet.pdf: 48,654 chars
+  Profit & Loss.pdf: 77,960 chars
+  Wohr_Balance Sheet_2025.pdf: 160,808 chars
+  8_IFCR Report Auditors Report_2025.pdf: 6,457 chars
+  10_Notes to Accounts Final_2025.pdf: 12,380 chars
+
+============================================================
+STEP 2: DOCUMENT PARSER AGENT
+============================================================
+
+PARSER OUTPUT:
+----------------------------------------
+## PROFIT & LOSS (in Lakhs)
+- Revenue from Operations: FY25 = 38,010.51 Lakhs | FY24 = 29,121.94 Lakhs
+- Other Income: FY25 = 421.91 Lakhs | FY24 = 432.62 Lakhs
+- Total Income: FY25 = 38,482.42 Lakhs | FY24 = 29,554.57 Lakhs
+- Finance Cost: FY25 = 115.58 Lakhs | FY24 = 75.42 Lakhs
+- Depreciation: FY25 = 248.55 Lakhs | FY24 = 236.78 Lakhs
+- Tax: FY25 = 220.23 Lakhs | FY24 = 2,037.34 Lakhs
+- PAT: FY25 = 2,489.81 Lakhs | FY24 = 1,282.32 Lakhs
+- PBT: FY25 = 3,307.61 Lakhs | FY24 = 1,783.34 Lakhs
+- Cost of Material Consumed: FY25 = 26,346.07 Lakhs | FY24 = 20,607.38 Lakhs
+- Employee Benefit Expense: FY25 = 2,748.37 Lakhs | FY24 = 2,179.10 Lakhs
+- Admin/Selling Expense: FY25 = 2,435.21 Lakhs | FY24 = 2,039.94 Lakhs
+
+## BALANCE SHEET (in Lakhs)
+- Share Capital: FY25 = 498.01 Lakhs | FY24 = 498.01 Lakhs
+- Reserves and Surplus: FY25 = 6,956.66 Lakhs | FY24 = 4,671.02 Lakhs
+- Long Term Borrowings: FY25 = 1,941.78 Lakhs | FY24 = 2,046.36 Lakhs
+- Short Term Borrowings: FY25 = 424.01 Lakhs | FY24 = 670.95 Lakhs
+- Current Maturities: FY25 = 76.36 Lakhs | FY24 = Not available
+- Trade Receivables: FY25 = 7,061.55 Lakhs | FY24 = 4,257.75 Lakhs
+- Trade Payables: FY25 = 5,121.95 Lakhs | FY24 = 4,295.41 Lakhs
+- Inventories: FY25 = 4,592.83 Lakhs | FY24 = 4,489.96 Lakhs
+- Cash and Cash Equivalents: FY25 = 4,152.39 Lakhs | FY24 = 3,847.63 Lakhs
+- Total Current Assets: FY25 = Not available | FY24 = Not available
+- Total Current Liabilities: FY25 = Not available | FY24 = Not available
+- CWIP: FY25 = 1,534.13 Lakhs | FY24 = 179.54 Lakhs
+
+## CASH FLOW STATEMENT (in Lakhs)
+- Operating Cash Flow: FY25 = 2,727.11 Lakhs | FY24 = -53.26 Lakhs
+- Investing Cash Flow: FY25 = -1,262.45 Lakhs | FY24 = 38.33 Lakhs
+- Financing Cash Flow: FY25 = -527.48 Lakhs | FY24 = 322.53 Lakhs
+
+## DERIVED METRICS
+- Net Worth: FY25 = 7,454.67 Lakhs | FY24 = 5,169.03 Lakhs  [formula: Share Capital + Reserves]
+- Total Debt: FY25 = 2,442.15 Lakhs | FY24 = 2,717.31 Lakhs  [formula: LT + ST + Maturities]
+- EBITDA: FY25 = 3,671.74 Lakhs | FY24 = 2,095.54 Lakhs  [formula: PBT + Finance Cost + Depreciation]
+- EBITDA%: FY25 = 9.66% | FY24 = 7.20%
+- Debt/Equity: FY25 = 0.33 | FY24 = 0.53
+- ICR: FY25 = 29.62x | FY24 = 24.65x
+- Current Ratio: FY25 = 1.64 | FY24 = 1.18
+- Debtor Days: FY25 = 67.80 days | FY24 = 53.40 days
+- Inventory Days: FY25 = 63.60 days | FY24 = 79.50 days
+
+## AUDITOR
+- Firm: V. S. Potdar & Co. (107984W)
+- Qualification: None
+
+## GST DATA
+- Monthly GSTR-1 vs GSTR-3B Variance: Not uploaded
+- Window Dressing Signal: Not uploaded
+- ITC Anomaly: Not uploaded
+
+## BANK DATA
+- Average Monthly Balance: Not uploaded
+- Cheque Bounces: Not uploaded
+- Fund Rotation: Not uploaded
+
+## OTHER / NOTES
+- CWIP: FY25 = 1,534.13 Lakhs | FY24 = 179.54 Lakhs
+- Proposed Dividend: FY25 = -204.18 Lakhs | FY24 = -527.48 Lakhs
+- MSME Payables: FY25 = 4,031.00 Lakhs | FY24 = 5,722.92 Lakhs
+- Customer Advances: FY25 = 3,087.78 Lakhs | FY24 = 2,986.13 Lakhs
+- Unearned Revenue: FY25 = 1,029.10 Lakhs | FY24 = 217.68 Lakhs
+- Related Party Transactions: Related party transactions mentioned (% not disclosed)
+- Contingent Liabilities: Not mentioned
+
+============================================================
+STEP 3: FRAUD DETECTOR AGENT
+============================================================
+
+FRAUD DETECTOR OUTPUT:
+----------------------------------------
+### SENTINEL FRAUD DETECTION REPORT
+
+FRAUD PATTERN SCAN:
+
+**Pattern 1 - Circular Trading:**
+Threshold Applied: GSTR-1 vs GSTR-3B Variance (not available)
+Evidence: Not available
+Score Impact: INSUFFICIENT DATA
+
+**Pattern 2 - Window Dressing:**
+Threshold Applied: Q4 revenue vs monthly average (not available)
+Evidence: Not available
+Score Impact: INSUFFICIENT DATA
+
+**Pattern 3 - Related Party Diversion:**
+Threshold Applied: Related Party Transactions % (not disclosed)
+Evidence: Related party transactions mentioned (no % disclosed)
+Score Impact: MONITOR (-2)
+
+**Pattern 4 - Fake Capex:**
+Threshold Applied: CWIP vs Net Worth / PPE (15% of Net Worth)
+Evidence: CWIP FY25 = 1,534.13 Lakhs, Net Worth FY25 = 7,454.67 Lakhs
+Score Impact: POSSIBLE (-5)
+
+**Pattern 5 - Channel Stuffing:**
+Threshold Applied: Debtor Days & Receivable vs Revenue Growth (above 120 days)
+Evidence: Debtor Days FY25 = 67.80 days
+Score Impact: CLEARED (0)
+
+**Pattern 6 - Debt Concealment:**
+Threshold Applied: Trade Payables & MSME Payables YoY (massive increase without revenue growth)
+Evidence: Trade Payables FY25 = 5,121.95 Lakhs, MSME Payables FY25 = 4,031.00 Lakhs
+Score Impact: POSSIBLE (-5)
+
+**Pattern 7 - Inventory Manipulation:**
+Threshold Applied: Inventory Days YoY (increasing more than 25% YoY)
+Evidence: Inventory Days FY25 = 63.60 days
+Score Impact: CLEARED (0)
+
+**Pattern 8 - Promoter Pledge:**
+Threshold Applied: Promoter shares pledged above 50%
+Evidence: Not available
+Score Impact: INSUFFICIENT DATA
+
+**Pattern 9 - Auditor Shopping:**
+Threshold Applied: Same auditor across years
+Evidence: Auditor Firm: V. S. Potdar & Co. (107984W) - same across years
+Score Impact: CLEARED (0)
+
+**Pattern 10 - Kite Flying:**
+Threshold Applied: Current Ratio (above 1.3)
+Evidence: Current Ratio FY25 = 1.64
+Score Impact: CLEARED (0)
+
+**Pattern 11 - Collateral Fraud:**
+Threshold Applied: Property value more than 50% above guideline/ready reckoner value
+Evidence: Not available
+Score Impact: INSUFFICIENT DATA
+
+**Pattern 12 - Management Inconsistency:**
+Threshold Applied: Factory capacity reported by credit officer on site visit differs from management claim by more than 20%
+Evidence: Not available
+Score Impact: INSUFFICIENT DATA
+
+**Pattern 13 - EBITDA Margin Collapse:**
+Threshold Applied: EBITDA margin percentage drops significantly YoY
+Evidence: EBITDA% FY25 = 9.66%, FY24 = 7.20% (margin increase)
+Score Impact: CLEARED (0)
+
+**Pattern 14 - Unearned Revenue Jump:**
+Threshold Applied: Unearned Revenue YoY (massive spike above 200%)
+Evidence: Unearned Revenue FY25 = 1,029.10 Lakhs, FY24 = 217.68 Lakhs (spike above 200%)
+Score Impact: MONITOR (-5)
+
+**Pattern 15 - Critical External Override:**
+Threshold Applied: Verified "wilful default", "fraud", "CBI investigation", or "insolvency proceedings"
+Evidence: Not available
+Score Impact: INSUFFICIENT DATA
+
+**Pattern 16 - Cash Flow Quality:**
+Threshold Applied: Operating Cash Flow (OCF) to PAT ratio > 1.0
+Evidence: OCF FY25 = 2,727.11 Lakhs, PAT FY25 = 2,489.81 Lakhs (OCF/PAT = 1.10)
+Score Impact: POSITIVE (+5)
+
+TOTAL FRAUD PENALTY: -12 points
+(Rejection threshold is -30. Current total: -12. Status: AT threshold.)
+
+GST VELOCITY FINGERPRINT:
+GSTR Variance %: Not available
+Window Dressing Probability: Not available
+Key Evidence: Not
+
+============================================================
+STEP 4: STRESS TEST AGENT
+============================================================
+
+STRESS TEST OUTPUT:
+----------------------------------------
+Based on the provided financial data, I will calculate the required metrics and run the 4 stress scenarios for Test Company Ltd.
+
+**Step 1: Extract CFO, EBITDA, Finance Costs, Total Debt, Net Worth, Cash Balance**
+
+From the CASH FLOW STATEMENT:
+
+* Operating Cash Flow (CFO): FY25 = 2,727.11 Lakhs | FY24 = -53.26 Lakhs
+* We will use FY25 CFO for the calculations.
+
+From the PROFIT & LOSS:
+
+* EBITDA: FY25 = 3,671.74 Lakhs | FY24 = 2,095.54 Lakhs
+* We will use FY25 EBITDA for the calculations.
+
+From the PROFIT & LOSS:
+
+* Finance Cost: FY25 = 115.58 Lakhs | FY24 = 75.42 Lakhs
+* We will use FY25 Finance Cost for the calculations.
+
+From the BALANCE SHEET:
+
+* Total Debt: FY25 = 2,442.15 Lakhs | FY24 = 2,717.31 Lakhs
+* We will use FY25 Total Debt for the calculations.
+
+From the BALANCE SHEET:
+
+* Net Worth: FY25 = 7,454.67 Lakhs | FY24 = 5,169.03 Lakhs
+* We will use FY25 Net Worth for the calculations.
+
+From the CASH FLOW STATEMENT:
+
+* Cash Balance: FY25 = 4,152.39 Lakhs | FY24 = 3,847.63 Lakhs
+* We will use FY25 Cash Balance for the calculations.
+
+**Step 2: Calculate TOTAL ANNUAL DEBT SERVICE**
+
+a. New Loan Annual Service = (Loan Amount / Tenure_years) + (Loan Amount × Interest Rate)
+
+Given:
+* Loan Amount = 2000.00 Lakhs
+* Tenure_years = 7 years (assuming a 7-year loan tenure)
+* Interest Rate = 8.75% (assuming a floating interest rate of 8.75%)
+
+New Loan Annual Service = (2000 / 7) + (2000 × 0.0875)
+= 285.71 + 175
+= 460.71 Lakhs
+
+b. Existing Debt Service = Declared Finance Costs from P&L (this represents annual interest)
+
+Existing Debt Service = 115.58 Lakhs (Finance Cost from P&L)
+
+c. Total Debt Service = a + b
+
+Total Debt Service = 460.71 + 115.58
+= 576.29 Lakhs
+
+**Step 3: BASE CASE DSCR = CFO / Total Debt Service**
+
+BASE CASE DSCR = 2727.11 / 576.29
+= 4.73x
+
+Note: The numerator (CFO) and denominator (Debt Service) are in the same units (Lakhs).
+
+**Scenario 1 — Customer Concentration Shock**
+
+Setup: Top 2 customers stop paying for 2 quarters (6 months).
+
+Step 1: Revenue impact = (Top 2 customer % × annual revenue) × 0.5
+
+Assuming top 2 customers = 40% of revenue (conservative default)
+
+Revenue impact = (40% × 38,010.51) × 0.5
+= 0.4 × 38,010.51 × 0.5
+= 6,060.81 Lakhs
+
+Step 2: New EBITDA = (Reduced Revenue × EBITDA margin) — fixed costs don't fall proportionately
+
+New Revenue = 38,010.51 - 6,060.81
+= 31,949.70 Lakhs
+
+New EBITDA = 31,949.70 × 0.966 (compressed EBITDA margin by 3-5 percentage points)
+= 30,864.45 Lakhs
+
+Step 3: New DSCR = New EBITDA ÷ Total Annual Debt Service
+
+New DSCR = 30,864.45 / 576.29
+= 5.36x
+
+Result: SURVIVES
+
+**Scenario 2 — Sector Revenue Shock (-25%)**
+
+Setup: Industry-wide disruption causes 25% revenue drop sustained for 2 years.
+
+Step 1: New Revenue = Current Revenue × 0.75
+
+New Revenue = 38,010.51 × 0.75
+= 28,507.88 Lakhs
+
+Step 2: Operating leverage — fixed costs don't fall. Assume EBITDA margin compresses by 4-6 percentage points.
+
+New EBITDA = 28,507.88 × 0.862 (compressed EBITDA margin by 4-6 percentage points)
+= 24,592.21 Lakhs
+
+Step 3: New DSCR = New EBITDA ÷ Total Annual Debt Service
+
+New DSCR = 24,592.21 / 576.29
+= 4.27x
+
+Result: SURVIVES
+
+**Scenario 3 — Interest Rate Shock (+200bps)**
+
+Setup: RBI hikes rates 200 basis points. This affects FLOATING rate debt only.
+
+Step 1: Assume 70% of total debt is floating rate (conservative for Indian cos)
+
+Floating rate debt = 70% × 2,442.15
+= 1,710.90 Lakhs
+
+Step 2: Additional interest = Total Debt × 70% × 2% = incremental cost
+
+Additional interest = 1,710.90 × 0.02
+= 34.22 Lakhs
+
+Step 3: New Finance Cost = Old Finance Cost + additional interest
+
+New Finance Cost = 115.58 + 34.22
+= 149.80 Lakhs
+
+Step 4

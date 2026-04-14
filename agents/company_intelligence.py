@@ -3,7 +3,7 @@
 # Fixes: Infosys should NEVER be rejected for speculative reasons
 
 import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.llm_client import call_llm
 
@@ -27,11 +27,11 @@ Company characteristics:
 - Examples: TCS, Infosys, Reliance, HDFC Bank, LT Ltd
 
 Impact on scoring:
-  ✓ Automatic +15 bonus points (Foundation credibility)
-  ✓ Research agent findings REQUIRE official sources (no news allegations)
-  ✓ Bear agent concerns must be CONFIRMED (not "possible")
-  ✓ Default decision: APPROVE unless CONFIRMED critical issue
-  ✓ Hallucinated findings automatically disregarded
+   Automatic +15 bonus points (Foundation credibility)
+   Research agent findings REQUIRE official sources (no news allegations)
+   Bear agent concerns must be CONFIRMED (not "possible")
+   Default decision: APPROVE unless CONFIRMED critical issue
+   Hallucinated findings automatically disregarded
 
 TIER 2: SOLID MID-CAP COMPANIES
 Company characteristics:
@@ -42,10 +42,10 @@ Company characteristics:
 - Examples: Mid-cap banking stocks, pharma companies, auto suppliers
 
 Impact on scoring:
-  ✓ Automatic +8 bonus points
-  ✓ Research requires credible sources (RBI, ministry, court official)
-  ✓ Bear concerns must have supporting evidence
-  ✓ Default: CONDITIONAL → APPROVAL path (easier to move toward approval)
+   Automatic +8 bonus points
+   Research requires credible sources (RBI, ministry, court official)
+   Bear concerns must have supporting evidence
+   Default: CONDITIONAL → APPROVAL path (easier to move toward approval)
 
 TIER 3: PRIVATE / SMALL CAP COMPANIES
 Company characteristics:
@@ -55,10 +55,10 @@ Company characteristics:
 - Auditor: Local firm acceptable
 
 Impact on scoring:
-  ✓ No bonus points
-  ✓ Standard scrutiny applied
-  ✓ All research findings treated equally
-  ✓ Bear concerns weight more heavily
+   No bonus points
+   Standard scrutiny applied
+   All research findings treated equally
+   Bear concerns weight more heavily
 
 TIER 4: STARTUPS / NEW VENTURES
 Company characteristics:
@@ -66,9 +66,9 @@ Company characteristics:
 - Limited track record
 
 Impact on scoring:
-  ✓ Higher scrutiny
-  ✓ Smaller loan amounts recommended
-  ✓ Collateral requirements stricter
+   Higher scrutiny
+   Smaller loan amounts recommended
+   Collateral requirements stricter
 
 ════════════════════════════════════════════════════════════
 YOUR ANALYSIS FORMAT
@@ -131,7 +131,7 @@ Classify into TIER 1-4 and determine credibility multiplier for this loan decisi
 Focus on: Listed status, auditor type, revenue size, track record.
 """
 
-    analysis = call_llm("company_intelligence", SYSTEM_PROMPT, user_message)
+    analysis = call_llm("company_intelligence", SYSTEM_PROMPT, user_message, max_completion_tokens=500)
 
     # Parse the response to extract tier
     tier = "TIER 3"  # Default
@@ -177,3 +177,4 @@ Focus on: Listed status, auditor type, revenue size, track record.
         "default_direction": default_direction,
         "analysis_text": analysis
     }
+

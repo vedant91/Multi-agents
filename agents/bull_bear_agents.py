@@ -2,7 +2,7 @@
 # AGENTS 4A & 4B — The Adversarial Debate (SENTINEL's Core Innovation)
 
 import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.llm_client import call_llm
 
@@ -49,7 +49,8 @@ OUTPUT FORMAT:
 
 === BULL BRIEF — CASE FOR APPROVAL ===
 
-HEADLINE: APPROVE ₹___ at ___% p.a.
+HEADLINE: APPROVE ₹[Exact Loan Amount] at [Proposed Rate]% p.a.
+(Note: Propose a realistic, competitive interest rate based on the company's Tier and financial strength, e.g., 8.5% to 12.0%)
 
 TOP 5 REASONS TO APPROVE:
 1. [Strongest financial signal] | Evidence: [specific number]
@@ -135,7 +136,7 @@ MATERIAL CONCERNS (require covenants if approved):
 1. [Concern] | Evidence: [specific data point] | Proposed Covenant: ___
 2. [Concern] | Evidence: [specific data point] | Proposed Covenant: ___
 
-⚠️ SPECULATIVE AREAS (flagged but NOT used for rejection):
+[WARN] SPECULATIVE AREAS (flagged but NOT used for rejection):
 [If there are areas where data is insufficient to judge, list them here.
 These should NOT form the basis of rejection for established companies.]
 
@@ -183,7 +184,8 @@ def run_bull_agent(parser_output: str, fraud_output: str,
     {research_output[:6000]}
     """
 
-    result = call_llm("bull", BULL_SYSTEM_PROMPT, user_message)
+    result = call_llm("bull", BULL_SYSTEM_PROMPT, user_message,
+                       max_completion_tokens=700)
     print("Bull Agent Complete")
     return result
 
@@ -215,6 +217,7 @@ def run_bear_agent(parser_output: str, fraud_output: str,
     {research_output[:6000]}
     """
 
-    result = call_llm("bear", BEAR_SYSTEM_PROMPT, user_message)
+    result = call_llm("bear", BEAR_SYSTEM_PROMPT, user_message,
+                       max_completion_tokens=700)
     print("Bear Agent Complete")
     return result

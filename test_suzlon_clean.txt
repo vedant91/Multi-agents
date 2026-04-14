@@ -1,0 +1,99 @@
+=== CHAIRMAN OUTPUT ===
+**TRIGGER VALIDATION RESULTS:**
+
+1. High Debt/Equity Ratio: CONFIRMED (validation rule: None)
+2. High Current Ratio: DISREGARDED (validation rule: Rule E - Allegations vs Confirmed)
+3. Long Debtor Days: DISREGARDED (validation rule: Rule E - Allegations vs Confirmed)
+4. High Inventory Days: DISREGARDED (validation rule: Rule E - Allegations vs Confirmed)
+5. High CWIP Growth: DISREGARDED (validation rule: Rule E - Allegations vs Confirmed)
+6. High Trade Receivables: DISREGARDED (validation rule: Rule E - Allegations vs Confirmed)
+
+**FRAUD DETECTOR VALIDATION:**
+
+Pattern 1: Circular Trading - CLEARED (3.5% variance is below the threshold)
+Pattern 5: Channel Stuffing - POSSIBLE (Debtor Days are 115 days, which is above 90 days)
+Pattern 7: Inventory Manipulation - CLEARED (Inventory days are 83 days, which is not increasing more than 25% YoY)
+Pattern 10: Kite Flying - CLEARED (Current Ratio is 1.18x, which is above 1.0)
+Pattern 15: Critical External Override - INSUFFICIENT DATA (No data available in the parser output)
+
+**THE DEBATE SCORECARD:**
+
+Bull's strongest point: Strong EBITDA Margin (21.8%) | Strength: STRONG
+Bear's strongest point: High Debt/Equity Ratio (0.23x) | Strength: STRONG
+Chairman's ruling on key dispute: The Bull's argument on strong EBITDA margin outweighs the Bear's concern on high debt/equity ratio, as the company's profitability and cash flow generation are stable.
+
+**SENTINEL CREDIT SCORECARD:**
+
+Pillar 1 - Financial Health:
+
+  Revenue Growth: 6/8 (CAGR 10-20%)
+  EBITDA Margin: 7/7 (21.8% vs sector avg)
+  Debt/Equity: 2/7 (0.23x)
+  ICR: 5/7 (13.7x)
+  CFO Quality: 4/6 (CFO/PAT 1.25x)
+  Pillar 1 Total: 24/35
+
+Pillar 2 - Fraud and Integrity:
+
+  Revenue Triangulation: 6/10 (1 gap)
+  Auditor Opinion: 7/7 (Clean opinion)
+  Related Party: 3/5 (Not available in documents)
+  Fraud Penalties: -5/25 (Pattern 5: Channel Stuffing)
+  Pillar 2 Total: 11/25
+
+Pillar 3 - External Intelligence:
+
+  Legal/Regulatory: 5/8 (No confirmed issues)
+  Promoter Track Record: 4/7 (Not available in documents)
+  Sector Health: 3/5 (Manufacturing sector is stable)
+  Pillar 3 Total: 12/20
+
+Pillar 4 - Management and Ops:
+
+  Site Visit/Factory: Not available (No primary notes provided by the credit officer)
+  Management Quality: 2/3 (Not available in documents)
+  Governance: 1/2 (Not available in documents)
+  Pillar 4 Total: 3/10
+
+Pillar 5 - Collateral and Repayment:
+
+  Collateral Coverage: 2/4 (Not available in documents)
+  Repayment History: 2/4 (Not available in documents)
+  DSCR: 1/2 (Not available in documents)
+  Pillar 5 Total: 5/10
+
+PILLAR SUBTOTAL: 55/100
+TIER BONUS: +0 (Tier 3)
+SENTINEL SCORE: 55/100 (capped at 100)
+
+**FINAL DECISION:**
+
+CONDITIONAL APPROVE
+
+**LOAN AMOUNT:**
+
+Rs. 400,000,000 (vs requested Rs. 500,000,000)
+
+**INTEREST RATE:**
+
+7.5% p.a. (Repo 6.5% + 1.0% risk premium)
+
+**TENURE:**
+
+36 months
+
+**SECURITY:**
+
+Primary: 70% of verified collateral value
+Collateral: 30% of verified collateral value
+
+**CONDITIONS / COVENANTS:**
+
+1. Covenant to maintain a minimum Current Ratio of 1.2x
+2. Covenant to maintain a maximum Debt-to-Equity Ratio of 0.25x
+3. Implement regular financial monitoring and reporting
+
+**REJECTION RATIONALE:**
+
+Primary Reason: High Debt/Equity Ratio (0.23x)
+Supporting Reason

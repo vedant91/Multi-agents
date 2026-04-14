@@ -1,0 +1,34 @@
+PAT SNIP:
+Profit for the year
+ -
+ -
+ -
+ 19,125.95
+ -
+ -
+ 19,125.95
+Transfer to statutory reserve
+ 3,825.19
+ -
+ -
+ (3,825.19)
+ -
+ -
+ -
+Balance as at 31 March 2024
+ 8,601.02 1,31,429.10
+ 4,656.67
+ 33,745.62
+ 396.
+
+Num: 19,125.95
+Num: 19,125.95
+Num: 825.19
+Num: 825.19
+Num: 31
+Num: 2024
+Num: 601.02
+Num: 31,429.10
+Num: 656.67
+Num: 33,745.62
+Num: 396

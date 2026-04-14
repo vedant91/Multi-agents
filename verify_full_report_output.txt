@@ -1,0 +1,142 @@
+﻿======================================================================
+EXTRACTING TEXT FROM 5 PDFs...
+======================================================================
+
+Extracting: Balance Sheet.pdf
+  [PDF] Balance Sheet.pdf: 10 pages
+    [OCR] Page 1/10 ΓÇö no text, running Tesseract...
+    [OCR] Page 2/10 ΓÇö no text, running Tesseract...
+    [OCR] Page 3/10 ΓÇö no text, running Tesseract...
+    [OCR] Page 4/10 ΓÇö no text, running Tesseract...
+    [OCR] Page 5/10 ΓÇö no text, running Tesseract...
+    [OCR] Page 6/10 ΓÇö no text, running Tesseract...
+    [OCR] Page 7/10 ΓÇö no text, running Tesseract...
+    [OCR] Page 8/10 ΓÇö no text, running Tesseract...
+    [OCR] Page 9/10 ΓÇö no text, running Tesseract...
+    [OCR] Page 10/10 ΓÇö no text, running Tesseract...
+  [PDF] Balance Sheet.pdf: 48,652 chars (10 OCR pages, 0 digital pages)
+
+Extracting: Profit & Loss.pdf
+  [PDF] Profit & Loss.pdf: 18 pages
+    [OCR] Page 1/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 2/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 3/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 4/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 5/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 6/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 7/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 8/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 9/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 10/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 11/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 12/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 13/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 14/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 15/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 16/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 17/18 ΓÇö no text, running Tesseract...
+    [OCR] Page 18/18 ΓÇö no text, running Tesseract...
+  [PDF] Profit & Loss.pdf: 77,958 chars (18 OCR pages, 0 digital pages)
+
+Extracting: Wohr_Balance Sheet_2025.pdf
+  [PDF] Wohr_Balance Sheet_2025.pdf: 68 pages
+  [PDF] Wohr_Balance Sheet_2025.pdf: 160,806 chars (0 OCR pages, 68 digital pages)
+
+Extracting: 8_IFCR Report Auditors Report_2025.pdf
+  [PDF] 8_IFCR Report Auditors Report_2025.pdf: 3 pages
+  [PDF] 8_IFCR Report Auditors Report_2025.pdf: 6,455 chars (0 OCR pages, 3 digital pages)
+
+Extracting: 10_Notes to Accounts Final_2025.pdf
+  [PDF] 10_Notes to Accounts Final_2025.pdf: 6 pages
+  [PDF] 10_Notes to Accounts Final_2025.pdf: 12,378 chars (0 OCR pages, 6 digital pages)
+
+======================================================================
+RUNNING DOCUMENT PARSER...
+======================================================================
+ Running Document Parser Agent (Python extractor mode)...
+  [DOC] Balance Sheet.pdf -> role: bs (48,654 chars)
+  [DOC] Profit & Loss.pdf -> role: pl (77,960 chars)
+  [DOC] Wohr_Balance Sheet_2025.pdf -> role: annual (160,808 chars)
+  [DOC] 8_IFCR Report Auditors Report_2025.pdf -> role: auditor (6,457 chars)
+  [DOC] 10_Notes to Accounts Final_2025.pdf -> role: notes (12,380 chars)
+  [DOC] Running Python regex extractor...
+  [DOC] LLM call for auditor/notes info...
+  [TIME]  doc_parser_notes LLM call: 1.8s
+  [DOC] Revenue: [38010.51, 29121.94]
+  [DOC] PAT: [2489.81, 1282.32]
+  [DOC] Finance Cost: [115.58, 75.42]
+  [DOC] EBITDA: [3671.7400000000002, 2095.54]
+  [DOC] Trade Receivables: [7061.55, 4257.75]
+  [DOC] Auditor: V. S. Potdar & Co. (107984W)
+[SUCCESS] Document Parser Complete
+
+======================================================================
+FINAL EXTRACTED REPORT
+======================================================================
+## PROFIT & LOSS (in Lakhs)
+- Revenue from Operations: FY25 = 38,010.51 Lakhs | FY24 = 29,121.94 Lakhs
+- Other Income: FY25 = 421.91 Lakhs | FY24 = 432.62 Lakhs
+- Total Income: FY25 = 38,482.42 Lakhs | FY24 = 29,554.57 Lakhs
+- Finance Cost: FY25 = 115.58 Lakhs | FY24 = 75.42 Lakhs
+- Depreciation: FY25 = 248.55 Lakhs | FY24 = 236.78 Lakhs
+- Tax: FY25 = 1,196.19 Lakhs | FY24 = 525.70 Lakhs
+- PAT: FY25 = 2,489.81 Lakhs | FY24 = 1,282.32 Lakhs
+- PBT: FY25 = 3,307.61 Lakhs | FY24 = 1,783.34 Lakhs
+- Cost of Material Consumed: FY25 = 26,346.07 Lakhs | FY24 = 20,607.38 Lakhs
+- Employee Benefit Expense: FY25 = 2,748.37 Lakhs | FY24 = 2,179.10 Lakhs
+- Admin/Selling Expense: FY25 = 2,435.21 Lakhs | FY24 = 2,039.94 Lakhs
+
+## BALANCE SHEET (in Lakhs)
+- Share Capital: FY25 = 498.01 Lakhs | FY24 = 498.01 Lakhs
+- Reserves and Surplus: FY25 = 6,956.66 Lakhs | FY24 = 4,671.02 Lakhs
+- Long Term Borrowings: FY25 = 1,941.78 Lakhs | FY24 = 2,046.36 Lakhs
+- Short Term Borrowings: FY25 = 424.01 Lakhs | FY24 = 670.95 Lakhs
+- Current Maturities: FY25 = 76.36 Lakhs | FY24 = Not available
+- Trade Receivables: FY25 = 7,061.55 Lakhs | FY24 = 4,257.75 Lakhs
+- Trade Payables: FY25 = 5,121.95 Lakhs | FY24 = 4,295.41 Lakhs
+- Inventories: FY25 = 4,592.83 Lakhs | FY24 = 4,489.96 Lakhs
+- Cash and Cash Equivalents: FY25 = 4,152.39 Lakhs | FY24 = 3,847.63 Lakhs
+- Total Current Assets: FY25 = 17,756.50 Lakhs | FY24 = 14,576.23 Lakhs
+- Total Current Liabilities: FY25 = 11,971.41 Lakhs | FY24 = 9,520.88 Lakhs
+- CWIP: FY25 = 1,534.13 Lakhs | FY24 = 179.54 Lakhs
+
+## CASH FLOW STATEMENT (in Lakhs)
+- Operating Cash Flow: FY25 = 2,727.11 Lakhs | FY24 = -53.26 Lakhs
+- Investing Cash Flow: FY25 = -1,262.45 Lakhs | FY24 = 38.33 Lakhs
+- Financing Cash Flow: FY25 = -527.48 Lakhs | FY24 = 322.53 Lakhs
+
+## DERIVED METRICS
+- Net Worth: FY25 = 7,454.67 Lakhs | FY24 = 5,169.03 Lakhs  [formula: Share Capital + Reserves]
+- Total Debt: FY25 = 2,442.15 Lakhs | FY24 = 2,717.31 Lakhs  [formula: LT + ST + Maturities]
+- EBITDA: FY25 = 3,671.74 Lakhs | FY24 = 2,095.54 Lakhs  [formula: PBT + Finance Cost + Depreciation]
+- EBITDA%: FY25 = 9.66% | FY24 = 7.20%
+- Debt/Equity: FY25 = 0.33 | FY24 = 0.53
+- ICR: FY25 = 29.62x | FY24 = 24.65x
+- Current Ratio: FY25 = 1.48 | FY24 = 1.36
+- Debtor Days: FY25 = 67.80 days | FY24 = 53.40 days
+- Inventory Days: FY25 = 63.60 days | FY24 = 79.50 days
+
+## AUDITOR
+- Firm: V. S. Potdar & Co. (107984W)
+- Qualification: None
+
+## GST DATA
+- Monthly GSTR-1 vs GSTR-3B Variance: Not uploaded
+- Window Dressing Signal: Not uploaded
+- ITC Anomaly: Not uploaded
+
+## BANK DATA
+- Average Monthly Balance: Not uploaded
+- Cheque Bounces: Not uploaded
+- Fund Rotation: Not uploaded
+
+## OTHER / NOTES
+- CWIP: FY25 = 1,534.13 Lakhs | FY24 = 179.54 Lakhs
+- Proposed Dividend: FY25 = -204.18 Lakhs | FY24 = -527.48 Lakhs
+- MSME Payables: FY25 = 4,031.00 Lakhs | FY24 = 5,722.92 Lakhs
+- Customer Advances: FY25 = 3,087.78 Lakhs | FY24 = 2,986.13 Lakhs
+- Unearned Revenue: FY25 = 1,029.10 Lakhs | FY24 = 217.68 Lakhs
+- Related Party Transactions: Related party transactions mentioned (% not disclosed)
+- Contingent Liabilities: Not mentioned
+
+[SAVED] Output written to final_report_output.txt

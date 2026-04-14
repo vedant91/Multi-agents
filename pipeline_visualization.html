@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Credit Intelligence Pipeline</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0f1117;
+            font-family: 'Inter', sans-serif;
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Dot grid background ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(circle, #ffffff0d 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Header ── */
+        header {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 48px 24px 32px;
+        }
+
+        header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f8fafc;
+            letter-spacing: -.02em;
+        }
+
+        header p {
+            margin-top: 6px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        /* ── Canvas wrapper ── */
+        .canvas {
+            position: relative;
+            z-index: 5;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 32px 80px;
+        }
+
+        /* ── SVG connector layer ── */
+        svg.connectors {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: visible;
+        }
+
+        /* ── Flow columns ── */
+        .flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        /* ── Row layouts ── */
+        .row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .row.triple {
+            gap: 12px;
+        }
+
+        /* ── Spacer between rows of nodes ── */
+        .spacer {
+            height: 56px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .spacer.slim {
+            height: 44px;
+        }
+
+        /* ── Node card ── */
+        .node {
+            position: relative;
+            border-radius: 14px;
+            border: 1.5px solid;
+            padding: 16px 18px;
+            width: 200px;
+            background: #161b27;
+            transition: transform .25s, box-shadow .25s;
+            cursor: default;
+        }
+
+        .node:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px -8px var(--glow);
+        }
+
+        .node .icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            margin-bottom: 10px;
+        }
+
+        .node .label {
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 5px;
+        }
+
+        .node .desc {
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* Input node */
+        .node.input {
+            --glow: rgba(99, 102, 241, .35);
+            border-color: rgba(99, 102, 241, .35);
+            background: linear-gradient(145deg, #161b27, #1a1835);
+        }
+
+        .node.input .icon {
+            background: rgba(99, 102, 241, .15);
+        }
+
+        .node.input .label {
+            color: #818cf8;
+        }
+
+        /* Blue */
+        .node.blue {
+            --glow: rgba(59, 130, 246, .3);
+            border-color: rgba(59, 130, 246, .3);
+        }
+
+        .node.blue .icon {
+            background: rgba(59, 130, 246, .12);
+        }
+
+        .node.blue .label {
+            color: #60a5fa;
+        }
+
+        /* Teal */
+        .node.teal {
+            --glow: rgba(20, 184, 166, .3);
+            border-color: rgba(20, 184, 166, .3);
+        }
+
+        .node.teal .icon {
+            background: rgba(20, 184, 166, .12);
+        }
+
+        .node.teal .label {
+            color: #2dd4bf;
+        }
+
+        /* Purple */
+        .node.purple {
+            --glow: rgba(168, 85, 247, .3);
+            border-color: rgba(168, 85, 247, .3);
+        }
+
+        .node.purple .icon {
+            background: rgba(168, 85, 247, .12);
+        }
+
+        .node.purple .label {
+            color: #c084fc;
+        }
+
+        /* Cyan */
+        .node.cyan {
+            --glow: rgba(6, 182, 212, .3);
+            border-color: rgba(6, 182, 212, .3);
+        }
+
+        .node.cyan .icon {
+            background: rgba(6, 182, 212, .12);
+        }
+
+        .node.cyan .label {
+            color: #22d3ee;
+        }
+
+        /* Red */
+        .node.red {
+            --glow: rgba(239, 68, 68, .3);
+            border-color: rgba(239, 68, 68, .3);
+        }
+
+        .node.red .icon {
+            background: rgba(239, 68, 68, .12);
+        }
+
+        .node.red .label {
+            color: #f87171;
+        }
+
+        /* Green */
+        .node.green {
+            --glow: rgba(34, 197, 94, .3);
+            border-color: rgba(34, 197, 94, .3);
+        }
+
+        .node.green .icon {
+            background: rgba(34, 197, 94, .12);
+        }
+
+        .node.green .label {
+            color: #4ade80;
+        }
+
+        /* Amber */
+        .node.amber {
+            --glow: rgba(245, 158, 11, .3);
+            border-color: rgba(245, 158, 11, .3);
+            background: linear-gradient(145deg, #161b27, #1c1810);
+        }
+
+        .node.amber .icon {
+            background: rgba(245, 158, 11, .12);
+        }
+
+        .node.amber .label {
+            color: #fbbf24;
+        }
+
+        /* Pink */
+        .node.pink {
+            --glow: rgba(236, 72, 153, .3);
+            border-color: rgba(236, 72, 153, .3);
+        }
+
+        .node.pink .icon {
+            background: rgba(236, 72, 153, .12);
+        }
+
+        .node.pink .label {
+            color: #f472b6;
+        }
+
+        /* Output */
+        .node.output {
+            --glow: rgba(34, 197, 94, .4);
+            border-color: rgba(34, 197, 94, .4);
+            background: linear-gradient(145deg, #0d1f18, #111e17);
+            width: 240px;
+            text-align: center;
+        }
+
+        .node.output .icon {
+            background: rgba(34, 197, 94, .12);
+            margin: 0 auto 10px;
+        }
+
+        .node.output .label {
+            color: #4ade80;
+            font-size: 14px;
+        }
+
+        .node.output .desc {
+            color: #4ade8088;
+        }
+
+        /* ── Parallel wrapper ── */
+        .parallel-group {
+            position: relative;
+            border: 1px dashed rgba(168, 85, 247, .25);
+            border-radius: 18px;
+            padding: 12px;
+            background: rgba(168, 85, 247, .03);
+            display: flex;
+            gap: 12px;
+            align-items: stretch;
+        }
+
+        .parallel-tag {
+            position: absolute;
+            top: -9px;
+            left: 16px;
+            background: #0f1117;
+            padding: 0 8px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: #a855f7;
+        }
+
+        .parallel-group .node {
+            width: 192px;
+        }
+
+        /* ── Connector pipe (vertical) ── */
+        .pipe {
+            width: 2px;
+            height: 44px;
+            background: linear-gradient(180deg, #1e2840, #334155, #1e2840);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pipe::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 10px;
+            border-radius: 10px;
+            background: #3b82f6;
+            animation: drip 1.8s ease-in-out infinite;
+        }
+
+        @keyframes drip {
+            0% {
+                top: -10px;
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 1;
+            }
+
+            85% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        .pipe.slim {
+            height: 32px;
+        }
+
+        .pipe.amber-pipe::after {
+            background: #fbbf24;
+        }
+
+        .pipe.green-pipe::after {
+            background: #4ade80;
+        }
+
+        /* ── Step label ── */
+        .step-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 18px;
+            padding: 0 4px;
+        }
+
+        .step-num {
+            width: 22px;
+            height: 22px;
+            background: #1e2840;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: #475569;
+        }
+
+        /* ── Fan-out connector lines via SVG ── */
+        .fanout-wrap {
+            position: relative;
+            width: 100%;
+        }
+
+        /* ── Phase label pill ── */
+        .phase-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #161b27;
+            border: 1px solid #1e2840;
+            border-radius: 100px;
+            padding: 5px 14px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: #475569;
+            margin: 20px 0 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Multi-Agent Credit Intelligence Pipeline</h1>
+        <p>Autonomous loan appraisal from document to decision</p>
+    </header>
+
+    <!-- ═══ CANVAS ═══ -->
+    <div class="canvas">
+        <div class="flow">
+
+            <!-- ── INPUT ── -->
+            <div class="row">
+                <div class="node input" id="n-input">
+                    <div class="icon">📁</div>
+                    <div class="label">Loan Application</div>
+                    <div class="desc">Company info, documents & loan details</div>
+                </div>
+            </div>
+
+            <div class="spacer slim">
+                <div class="pipe"></div>
+            </div>
+
+            <!-- ── DOC PARSER ── -->
+            <div class="row">
+                <div class="node blue" id="n-parser">
+                    <div class="icon">📑</div>
+                    <div class="label">Document Parser</div>
+                    <div class="desc">Extracts financials from uploaded PDFs</div>
+                </div>
+            </div>
+
+            <div class="spacer slim">
+                <div class="pipe"></div>
+            </div>
+
+            <!-- ── FINANCIAL CONSISTENCY ── -->
+            <div class="row">
+                <div class="node blue" id="n-consist">
+                    <div class="icon">🔢</div>
+                    <div class="label">Consistency Check</div>
+                    <div class="desc">Validates arithmetic across all statements</div>
+                </div>
+            </div>
+
+            <div class="spacer slim">
+                <div class="pipe"></div>
+            </div>
+
+            <!-- ── RESEARCH ── -->
+            <div class="row">
+                <div class="node teal" id="n-research">
+                    <div class="icon">🔍</div>
+                    <div class="label">Research Agent</div>
+                    <div class="desc">Investigates company, promoter & sector</div>
+                </div>
+            </div>
+
+            <!-- FAN-OUT: company intel + fact check -->
+            <div class="spacer slim">
+                <div class="pipe"></div>
+            </div>
+
+            <div class="row" style="gap:20px;">
+                <div class="node purple" id="n-intel">
+                    <div class="icon">🏢</div>
+                    <div class="label">Company Intelligence</div>
+                    <div class="desc">Classifies company credibility tier</div>
+                </div>
+                <div class="node cyan" id="n-fact">
+                    <div class="icon">✅</div>
+                    <div class="label">Fact Checker</div>
+                    <div class="desc">Verifies every research finding has a source</div>
+                </div>
+            </div>
+
+            <div class="spacer slim">
+                <div class="pipe"></div>
+            </div>
+
+            <!-- ── FRAUD ── -->
+            <div class="row">
+                <div class="node red" id="n-fraud">
+                    <div class="icon">🚨</div>
+                    <div class="label">Fraud Detector</div>
+                    <div class="desc">Scans 16 fraud patterns across all data</div>
+                </div>
+            </div>
+
+            <div class="spacer slim">
+                <div class="pipe"></div>
+            </div>
+
+            <!-- ── PARALLEL DEBATE ── -->
+            <div class="row">
+                <div class="parallel-group" id="n-debate">
+                    <div class="parallel-tag">⚡ runs in parallel</div>
+                    <div class="node green" id="n-bull">
+                        <div class="icon">🐂</div>
+                        <div class="label">Bull Agent</div>
+                        <div class="desc">Makes the strongest case for approval</div>
+                    </div>
+                    <div class="node red" id="n-bear">
+                        <div class="icon">🐻</div>
+                        <div class="label">Bear Agent</div>
+                        <div class="desc">Makes the strongest case against approval</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="spacer slim">
+                <div class="pipe amber-pipe"></div>
+            </div>
+
+            <!-- ── CHAIRMAN ── -->
+            <div class="row">
+                <div class="node amber" id="n-chairman">
+                    <div class="icon">⚖️</div>
+                    <div class="label">Chairman Agent</div>
+                    <div class="desc">Adjudicates debate & issues final credit score</div>
+                </div>
+            </div>
+
+            <div class="spacer slim">
+                <div class="pipe"></div>
+            </div>
+
+            <!-- ── STRESS TEST ── -->
+            <div class="row">
+                <div class="node pink" id="n-stress">
+                    <div class="icon">💥</div>
+                    <div class="label">Stress Test Agent</div>
+                    <div class="desc">Simulates adverse economic scenarios</div>
+                </div>
+            </div>
+
+            <div class="spacer slim">
+                <div class="pipe green-pipe"></div>
+            </div>
+
+            <!-- ── CAM GENERATOR ── -->
+            <div class="row">
+                <div class="node green" id="n-cam">
+                    <div class="icon">📋</div>
+                    <div class="label">CAM Generator</div>
+                    <div class="desc">Compiles all outputs into a formal credit memo</div>
+                </div>
+            </div>
+
+            <div class="spacer slim">
+                <div class="pipe green-pipe"></div>
+            </div>
+
+            <!-- ── OUTPUT ── -->
+            <div class="row">
+                <div class="node output" id="n-output">
+                    <div class="icon">🏦</div>
+                    <div class="label">Credit Decision</div>
+                    <div class="desc">Final verdict · Score · Loan terms</div>
+                </div>
+            </div>
+
+        </div><!-- /flow -->
+    </div><!-- /canvas -->
+
+    <!-- ── SVG overlay for fan-out lines ── -->
+    <svg id="svg-overlay"
+        style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;overflow:visible;">
+        <defs>
+            <marker id="arrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                <path d="M0,0 L6,3 L0,6 Z" fill="#334155" />
+            </marker>
+            <marker id="arrow-a" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                <path d="M0,0 L6,3 L0,6 Z" fill="#fbbf24" />
+            </marker>
+        </defs>
+        <!-- lines drawn by JS -->
+    </svg>
+
+    <script>
+        // Draw SVG lines between nodes for complex connections
+        function midX(el) {
+            const r = el.getBoundingClientRect();
+            return r.left + r.width / 2;
+        }
+        function midY(el) {
+            const r = el.getBoundingClientRect();
+            return r.top + r.height / 2;
+        }
+        function botY(el) {
+            return el.getBoundingClientRect().bottom;
+        }
+        function topY(el) {
+            return el.getBoundingClientRect().top;
+        }
+
+        function makeLine(svg, x1, y1, x2, y2, color = '#334155', dashed = false, marker = 'arrow') {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.setAttribute('stroke', color);
+            line.setAttribute('stroke-width', '1.5');
+            if (dashed) line.setAttribute('stroke-dasharray', '4 4');
+            line.setAttribute('marker-end', `url(#${marker})`);
+            svg.appendChild(line);
+        }
+
+        function makeCurve(svg, x1, y1, x2, y2, color = '#334155') {
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            const cy = (y1 + y2) / 2;
+            const d = `M ${x1} ${y1} C ${x1} ${cy}, ${x2} ${cy}, ${x2} ${y2}`;
+            path.setAttribute('d', d);
+            path.setAttribute('stroke', color);
+            path.setAttribute('stroke-width', '1.5');
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke-dasharray', '5 4');
+            svg.appendChild(path);
+        }
+
+        function drawLines() {
+            const svg = document.getElementById('svg-overlay');
+            // Clear old lines
+            while (svg.childNodes.length > 1) svg.removeChild(svg.lastChild); // keep defs
+
+            const research = document.getElementById('n-research');
+            const intel = document.getElementById('n-intel');
+            const fact = document.getElementById('n-fact');
+            const fraud = document.getElementById('n-fraud');
+            const debate = document.getElementById('n-debate');
+            const chairman = document.getElementById('n-chairman');
+
+            // Research → Intel (left branch)
+            makeCurve(svg,
+                midX(research), botY(research),
+                midX(intel), topY(intel),
+                '#a855f755'
+            );
+
+            // Research → Fact (right branch)
+            makeCurve(svg,
+                midX(research), botY(research),
+                midX(fact), topY(fact),
+                '#06b6d455'
+            );
+
+            // Intel → Fraud
+            makeCurve(svg,
+                midX(intel), botY(intel),
+                midX(fraud), topY(fraud),
+                '#ef444455'
+            );
+
+            // Fact → Fraud
+            makeCurve(svg,
+                midX(fact), botY(fact),
+                midX(fraud), topY(fraud),
+                '#ef444455'
+            );
+
+            // Debate → Chairman (converge)
+            const bullEl = document.getElementById('n-bull');
+            const bearEl = document.getElementById('n-bear');
+
+            makeCurve(svg,
+                midX(bullEl), botY(bullEl),
+                midX(chairman), topY(chairman),
+                '#fbbf2455'
+            );
+            makeCurve(svg,
+                midX(bearEl), botY(bearEl),
+                midX(chairman), topY(chairman),
+                '#fbbf2455'
+            );
+        }
+
+        window.addEventListener('load', drawLines);
+        window.addEventListener('resize', drawLines);
+    </script>
+</body>
+
+</html>

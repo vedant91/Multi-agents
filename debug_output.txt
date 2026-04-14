@@ -1,0 +1,49 @@
+WOHRPARKINGSYSTEMSPRIVATELIMITED.
+1206/41A,VYASVERTEX,J.M.ROAD,SHIVAJINAGAR,PUNE-411004.
+PROFITANDLOSSFORTHEYEARENDED31STMARCH,2025.
+FOR THE YEAR   |   FOR THE YEAR
+ENDED
+SR.   |   NOTE
+PARTICULARS   |   31.03.2025   |   31.03.2024
+NO.   |   NO.   |   AMOUNT   |   AMOUNT
+InLakhs   |   InLakhs
+I. | Revenue from operations   |   18   |   38010.51   |   29121.94
+1I. | OtherIncome   |   19   |   421.91   |   432.62
+III. | TOTALINCOME (I+II)   |   38432.42   |   29554.57
+IV.   |   Expenses:
+(a) Cost of material consumed   |   20&21   |   26346.07   |   20607.38
+(b) Changes in inventories of finished goods, 22   |   (145.38)   |   (33.06)
+work-in-progress and stock in trade.
+(c)Manufacturing expenses   |   23   |   3376.40   |   2665.67
+(d) Employee benefit expense   |   24   |   2748.37   |   2179.10
+(e)Administrative & selling expense | 25   |   2435.21   |   2039.94
+(fFinance cost   |   26   |   115.58   |   75.42
+(g)Depreciation and amortization expense 10   |   248.55   |   236.78
+V. | TOTALEXPENSES   |   35124.81   |   27771.23
+VI. | PROFITBEFOREEXCEPTIONAL/EXTRAORDINARY   |   3307.61   |   1783.34
+ITEMS AND BEFORE TAX (II-V)
+VII. | EXCEPTIONAL/EXTRAORDINARYITEMS
+VIII. PROFITBEFORE TAX (VI-VII)   |   3307.61   |   1783.34
+IX. | TAXEXPENSEFROMCONTINUINGOPERATIONS
+(1) Current tax
+For the Y.E 31.03.2025 (P.Y 31.03.2024)   |   1006.99   |   513.36
+(2) Deferred tax   |   189.20   |   12.34
+X. | PROFITFORTHEPERIODFROMCONTINUING   |   2489.81   |   1282.32
+OPERATIONS(VIII-IX)
+XII. | PROFITFORTHEPERIOD   |   2489.81   |   1282.32
+XIII. | EARNINGSPEREQUITYSHARE
+(1) Basic   |   31   |   .00   |   .00
+(2) Diluted   |   31   |   .00   |   .00
+SEEACCOMPANYINGNOTESTOTHEFINANCIAL
+ASPEROURREPORTOFEVENDATE
+FORV.S.POTDAR&CO.,   |   FORWOHRRARKINGSYSTEMSPVT.LTD
+FIRMREG.NO.107984W
+CHARTEREDACCOUNTANTS   |   S
+Q
+★   |   (GIRISHYYAS)   |   (MARKUS HOFHEIZN)
+PUNE-4   |   S.POTDAR)   |   MANAGINGDIRECTOR   |   CHAIRMAN
+M   |   DIN:00590531   |   DIN:09483610
+PARTNER
+M.NO.35471   |   PLACE:Pune   |   PLACE:Friolzheim
+PLACE:PUNE
+DATE:29.07.2025 QDIN:25035471BMOJT06014   |   ....34...

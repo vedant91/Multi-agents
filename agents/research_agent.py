@@ -2,7 +2,7 @@
 # AGENT 2 — Searches the internet for external intelligence on the company
 
 import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.llm_client import call_llm
 from utils.web_search import run_all_research_searches
@@ -82,7 +82,7 @@ You receive raw web search results. Analyze them to:
 
 SEVERITY CLASSIFICATION:
 
-🔴 HIGH — Potential automatic rejection trigger
+ HIGH — Potential automatic rejection trigger
    ONLY if confirmed by official source (RBI list, NCLT order, SEBI order, court judgment)
    Examples: Confirmed wilful defaulter on RBI list, active CIRP order from NCLT,
              SEBI debarment order (not just fine), convicted by court for fraud
@@ -104,11 +104,11 @@ AUTOMATIC REJECTION TRIGGERS — FLAG ONLY IF OFFICIALLY CONFIRMED:
   - NPA declared by scheduled commercial bank in writing (last 3 years)
 
 NOT automatic rejection triggers (common mistakes):
-  ✗ GST demand notice — this is a dispute, not a cancellation
-  ✗ SEBI fine or settlement — not the same as debarment
-  ✗ News article alleging fraud without official order
-  ✗ Old resolved matters (more than 5 years ago, settled)
-  ✗ Civil litigation that is ongoing but unresolved
+   GST demand notice — this is a dispute, not a cancellation
+   SEBI fine or settlement — not the same as debarment
+   News article alleging fraud without official order
+   Old resolved matters (more than 5 years ago, settled)
+   Civil litigation that is ongoing but unresolved
 
 ════════════════════════════════════════════════════════════
 OUTPUT FORMAT
@@ -120,11 +120,11 @@ HALLUCINATION GUARD STATUS:
 All findings below are supported by quoted text from search results.
 Findings without search result support have been excluded.
 
-⛔ AUTOMATIC REJECTION TRIGGERS:
+ AUTOMATIC REJECTION TRIGGERS:
 [NONE FOUND — state this clearly if nothing confirmed]
 [OR list only officially-confirmed triggers with quote + official source URL]
 
-🔴 CRITICAL FINDINGS (HIGH SEVERITY — confirmed with source):
+ CRITICAL FINDINGS (HIGH SEVERITY — confirmed with source):
 Finding: [what was found]
 Quote from search: "[exact short quote under 15 words]"
 Source: [domain name]
@@ -142,23 +142,23 @@ Credit Score Impact: -X points
 🟡 INFORMATIONAL (LOW — noted but not penalized):
 [Brief factual notes with source]
 
-⚠️ UNVERIFIED ALLEGATIONS (found in news but not officially confirmed):
+[WARN] UNVERIFIED ALLEGATIONS (found in news but not officially confirmed):
 [List here — these do NOT trigger automatic rejection but should be manually verified]
 Manual check recommended at: [official source URL]
 
-🕸️ PROMOTER NETWORK RISK:
+️ PROMOTER NETWORK RISK:
 Risk Level: LOW / MEDIUM / HIGH / CRITICAL
 Key Concern: [1 sentence — only if evidence found]
 Entities flagged: [list only if search results mention them]
 
-📊 SECTOR RISK CARD:
+[CHART] SECTOR RISK CARD:
 Sector: [name] | Risk Level: LOW / MEDIUM / HIGH
 Key Risk 1: [from search results]
 Key Risk 2: [from search results]
 Key Risk 3: [from search results]
 Tailwind: [positive sector news if found]
 
-📰 NEWS SENTIMENT:
+ NEWS SENTIMENT:
 Last 18 months: Positive / Neutral / Negative ratio estimate
 Trend: IMPROVING / STABLE / DETERIORATING
 Most significant headline: [title + source + approximate date]

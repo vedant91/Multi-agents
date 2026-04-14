@@ -51,9 +51,9 @@ try:
     
     print(f"\n1. INFOSYS LOAN DECISION:")
     if is_approved:
-        print("   ✅ APPROVED (Tier 1 override working)")
+        print("   [SUCCESS] APPROVED (Tier 1 override working)")
     else:
-        print("   ⚠️  Check decision text")
+        print("   [WARN]  Check decision text")
     
     # Check CAM document
     cam_path = results.get('cam_doc_path', '')
@@ -61,55 +61,55 @@ try:
         file_size = os.path.getsize(cam_path)
         filename = os.path.basename(cam_path)
         print(f"\n2. CAM DOCUMENT SAVE:")
-        print(f"   ✅ File created successfully")
+        print(f"   [SUCCESS] File created successfully")
         print(f"   Filename: {filename}")
         print(f"   Size: {file_size} bytes")
         
         # Show it has timestamp
         if "_202603" in filename or "_v" in filename:
-            print(f"   ✅ Unique filename with timestamp (prevents overwrites)")
+            print(f"   [SUCCESS] Unique filename with timestamp (prevents overwrites)")
     else:
         print(f"\n2. CAM DOCUMENT SAVE:")
-        print(f"   ❌ File not created: {cam_path}")
+        print(f"   [FAIL] File not created: {cam_path}")
     
     # Check score
     if "99/100" in chairman_text:
         print(f"\n3. CREDIT SCORE:")
-        print(f"   ✅ Score 99/100 (Tier 1 bonus applied)")
+        print(f"   [SUCCESS] Score 99/100 (Tier 1 bonus applied)")
     else:
         print(f"\n3. CREDIT SCORE:")
-        print(f"   ✅ Score calculated (check full output for value)")
+        print(f"   [SUCCESS] Score calculated (check full output for value)")
     
     print("\n" + "="*80)
-    print("SYSTEM STATUS: ✅ ALL FIXES VERIFIED")
+    print("SYSTEM STATUS: [SUCCESS] ALL FIXES VERIFIED")
     print("="*80)
     
     print("""
-✅ FIX 1: Web search timeout/fallback
+[SUCCESS] FIX 1: Web search timeout/fallback
    Status: Working (using mock data)
 
-✅ FIX 2: Tier 1 company default approval  
+[SUCCESS] FIX 2: Tier 1 company default approval  
    Status: Infosys correctly APPROVED
 
-✅ FIX 3: Evidence validation rules
+[SUCCESS] FIX 3: Evidence validation rules
    Status: Chairman enforces tier-based logic
 
-✅ FIX 4: Unique filename with timestamp
+[SUCCESS] FIX 4: Unique filename with timestamp
    Status: CAM saved as CAM_Infosys_Limited_20260306_xxxxxx.docx
 
-✅ FIX 5: Permission error handling & retry logic
+[SUCCESS] FIX 5: Permission error handling & retry logic
    Status: Graceful fallback if file locked
 
-✅ FIX 6: Directory creation with error handling
+[SUCCESS] FIX 6: Directory creation with error handling
    Status: output/ directory properly created
 
-STATUS: PRODUCTION READY 🚀
+STATUS: PRODUCTION READY [ROCKET]
 
 Next: Try with real company data or upload documents in Streamlit UI!
 """)
 
 except Exception as e:
-    print(f"\n❌ ERROR: {str(e)}")
+    print(f"\n[FAIL] ERROR: {str(e)}")
     import traceback
     traceback.print_exc()
 
